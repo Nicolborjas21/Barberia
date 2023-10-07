@@ -10,6 +10,7 @@ import Conexion.Conexion;
 import java.awt.Color;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 
@@ -235,7 +236,15 @@ public class MostrarCompras extends javax.swing.JPanel {
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        VerCompras verCompras = new VerCompras();
+        int fila = tblMostrarCompras.getSelectedRow(); 
+        VerCompras verCompras = new VerCompras(tblMostrarCompras.getValueAt(fila, 5).toString());
+        //JOptionPane.showMessageDialog(null, tblMostrarCompras.getValueAt(fila, 5));
+        verCompras.lblFactura.setText(tblMostrarCompras.getValueAt(fila, 0).toString());
+        verCompras.lblCai.setText(tblMostrarCompras.getValueAt(fila, 1).toString());
+        verCompras.lblProveedor.setText(tblMostrarCompras.getValueAt(fila, 2).toString());
+        verCompras.lblContado.setText(tblMostrarCompras.getValueAt(fila, 3).toString());
+        verCompras.lblFecha.setText(tblMostrarCompras.getValueAt(fila, 4).toString());
+        
         verCompras.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 

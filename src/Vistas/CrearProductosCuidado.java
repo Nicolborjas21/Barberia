@@ -7,6 +7,8 @@ package Vistas;
 import ConsultasSQL.QuerysProductosCuidados;
 import javax.swing.JOptionPane;
 import Controlador.ProductosCuidado;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -69,10 +71,34 @@ public class CrearProductosCuidado extends javax.swing.JFrame {
 
         jLabel7.setText("Tamaño");
 
+        txtname.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtnameKeyTyped(evt);
+            }
+        });
+
+        txtMarca.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtMarcaKeyTyped(evt);
+            }
+        });
+
+        txtamanos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtamanosKeyTyped(evt);
+            }
+        });
+
+        txtCategoria.setEditable(false);
         txtCategoria.setText("Producto Cuidado");
 
         jarDescripcion.setColumns(20);
         jarDescripcion.setRows(5);
+        jarDescripcion.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jarDescripcionKeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(jarDescripcion);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -181,13 +207,86 @@ public class CrearProductosCuidado extends javax.swing.JFrame {
 
             // Llamar al método Guardar de la clase Productos para guardar los datos
             if (ProductosCuidado.Guardar(querys)) {
-                JOptionPane.showMessageDialog(this, "Nuevo Empleado Ingresado Exitosamente");
+                JOptionPane.showMessageDialog(this, "Nuevo producto de cuidado ingresado");
                 
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Algo salio mal");
             }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtnameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtnameKeyTyped
+        txtname.setText(txtname.getText().replaceAll("( )+", " "));
+        if (txtname.getText().length() == 0 && evt.getKeyChar() == ' ') {
+                    evt.consume();
+                }      
+        
+        
+         char c = evt.getKeyChar();
+         if(Character.isDigit(c)){
+            getToolkit().beep();
+            evt.consume();
+         }
+            int tam = txtname.getText().length();
+        if(tam>=30){
+            evt.consume();
+        }  else if((int)evt.getKeyChar()>32 && (int)evt.getKeyChar()<=47
+                ||(int)evt.getKeyChar()>=58 && (int)evt.getKeyChar()<=64
+                ||(int)evt.getKeyChar()>=91 && (int)evt.getKeyChar()<=96
+                ||(int)evt.getKeyChar()>=123 && (int)evt.getKeyChar()<=159
+                ||(int)evt.getKeyChar()>=166 && (int)evt.getKeyChar()<=255){
+             getToolkit().beep();
+            evt.consume();
+        }
+        
+    }//GEN-LAST:event_txtnameKeyTyped
+
+    private void txtMarcaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMarcaKeyTyped
+        txtMarca.setText(txtMarca.getText().replaceAll("( )+", " "));
+        if (txtMarca.getText().length() == 0 && evt.getKeyChar() == ' ') {
+                    evt.consume();
+                }      
+        
+        
+         char c = evt.getKeyChar();
+         if(Character.isDigit(c)){
+            getToolkit().beep();
+            evt.consume();
+         }
+            int tam = txtMarca.getText().length();
+        if(tam>=30){
+            evt.consume();
+        }  else if((int)evt.getKeyChar()>32 && (int)evt.getKeyChar()<=47
+                ||(int)evt.getKeyChar()>=58 && (int)evt.getKeyChar()<=64
+                ||(int)evt.getKeyChar()>=91 && (int)evt.getKeyChar()<=96
+                ||(int)evt.getKeyChar()>=123 && (int)evt.getKeyChar()<=159
+                ||(int)evt.getKeyChar()>=166 && (int)evt.getKeyChar()<=255){
+             getToolkit().beep();
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtMarcaKeyTyped
+
+    private void txtamanosKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtamanosKeyTyped
+        txtamanos.setText(txtamanos.getText().replaceAll("( )+", " "));
+        if (txtamanos.getText().length() == 0 && evt.getKeyChar() == ' ') {
+                    evt.consume();
+                }      
+            int tam = txtamanos.getText().length();
+        if(tam>=30){
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtamanosKeyTyped
+
+    private void jarDescripcionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jarDescripcionKeyTyped
+         jarDescripcion.setText(jarDescripcion.getText().replaceAll("( )+", " "));
+        if (jarDescripcion.getText().length() == 0 && evt.getKeyChar() == ' ') {
+                    evt.consume();
+                }      
+            int tam = jarDescripcion.getText().length();
+        if(tam>=255){
+            evt.consume();
+        }
+    }//GEN-LAST:event_jarDescripcionKeyTyped
 
     /**
      * @param args the command line arguments

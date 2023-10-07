@@ -1,1 +1,1 @@
-# Proyecto Barbaria utilizado para mejor control de Inventario interno.
+# Proyecto Barberia utilizado para mejor control de Inventario interno.

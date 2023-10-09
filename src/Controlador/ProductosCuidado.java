@@ -6,23 +6,109 @@ package Controlador;
 
 import Conexion.Conexion;
 import ConsultasSQL.QuerysProductosCuidados;
+import Vistas.MostrarProductosCuidado;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author Admin
+ * @author Admins
  */
 public class ProductosCuidado {
     
-     private static Conexion con = new Conexion();
+    private static Conexion con = new Conexion();
     private static Connection conexion = con.getConexion();
     private static PreparedStatement ps = null;
     
-    
+    private static final int filasxPagina = 2;   
+        public static int NumeroPages(){
+                String sql = ""; 
+                sql = "SELECT count(*) from catalogo_productos";
+
+            try{
+                 Statement st = conexion.createStatement();
+
+                ps = conexion.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    int totalPages = (int) Math.ceil((double) rs.getInt(1) / filasxPagina);
+                    return totalPages;
+                } else {
+                    return 0;
+                }
+            }catch (SQLException ex){
+                Logger.getLogger(ProductosCuidado.class.getName()).log(Level.SEVERE, null, ex);
+                return 0;
+            }
+
+        }
+        
+         public static void MostrarProductosCuidado(String buscar, int paginaActual, int totalPages){
+        DefaultTableModel model = (DefaultTableModel)MostrarProductosCuidado.tblMostrarProductos.getModel();
+           while(model.getRowCount() > 0 ){
+               
+            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(4).setMaxWidth(0);
+            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(4).setMinWidth(0);
+            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(0);
+            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(4).setMinWidth(0);
+
+//            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(6).setMaxWidth(0);
+//            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(6).setMinWidth(0);
+//            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(0);
+//            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(6).setMinWidth(0);
+
+            model.removeRow(0);
+        }
+      
+           String sql = "";
+            if (!buscar.isEmpty()) {
+            sql = "SELECT id, nombre, marca, tamano, categoria, descripcion FROM catalogo_productos WHERE nombre LIKE '%" + buscar + "%' OR marca LIKE '%" + buscar + "%' limit " + filasxPagina + " offset " + (paginaActual - 1) * filasxPagina;
+            } else {
+            sql = "SELECT id, nombre, marca, tamano, categoria, descripcion FROM catalogo_productos limit " + filasxPagina + " offset " + (paginaActual - 1) * filasxPagina;
+            }
+
+
+        
+        String datos[] = new String[7];
+        
+        try{
+        
+            Statement st = conexion.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            //int count = 1;
+            while(rs.next()){
+                //datos[0] = count+"";
+                datos[0] = rs.getString("nombre");
+                datos[1] = rs.getString("marca");
+                datos[2] = rs.getString("tamano");
+                datos[3] = rs.getString("categoria");
+                datos[4] = rs.getString("descripcion");
+                datos[5] = rs.getString("id");
+                model.addRow(datos);
+                totalPages = NumeroPages();
+                
+                MostrarProductosCuidado.seguimiento.setText("Página " + paginaActual + " de " + totalPages);
+                DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
+                tcr.setHorizontalAlignment(SwingConstants.RIGHT);
+                MostrarProductosCuidado.tblMostrarProductos.setModel(model);
+                
+            }
+           
+        }catch (SQLException ex){
+            Logger.getLogger(MostrarProductosCuidado.class.getName()).log(Level.SEVERE, null, ex);
+            
+        }
+    }
+         
     public static boolean Guardar(QuerysProductosCuidados qp) {
     String sql = QuerysProductosCuidados.RegistraProducto; 
 
@@ -42,5 +128,6 @@ public class ProductosCuidado {
 //            Logger.getLogger(Funciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
     
 }

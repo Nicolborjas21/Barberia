@@ -9,6 +9,7 @@ package ConsultasSQL;
  * @author Admin
  */
 public class QuerysProductosCuidados {
+    private int id;
     private String nombre;
     private String marca;
     private String tamano;
@@ -16,6 +17,14 @@ public class QuerysProductosCuidados {
     private String descripcion;
     private String precio;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     public String getNombre() {
         return nombre;
     }
@@ -67,4 +76,6 @@ public class QuerysProductosCuidados {
     public static String RegistraProducto = "INSERT INTO catalogo_productos("
             + "nombre," + "marca," + "tamano," + "categoria," + "descripcion)"
             + "VALUES(?,?,?,?,?)";
+    
+    public static String ListarProductos = "SELECT * FROM catalogo_productos";
 }

@@ -190,7 +190,8 @@ public class Vistaprincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalidasActionPerformed
 
     private void btnProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductosActionPerformed
-        
+        MostrarProductosCuidado mostrarProductosCuidado = new MostrarProductosCuidado();
+        identificarVista(mostrarProductosCuidado);
     }//GEN-LAST:event_btnProductosActionPerformed
 
     private void btnProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProveedoresActionPerformed

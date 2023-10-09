@@ -11,8 +11,10 @@ import java.sql.Connection;
 import javax.swing.JOptionPane;
 import java.sql.*;
 import Clases.Proveedor;
+import static Vistas.MostrarCompras.totalPages;
 import javax.swing.JTextField;
 import java.util.Date;
+import javax.swing.table.DefaultTableModel;
 
 
 
@@ -21,18 +23,24 @@ import java.util.Date;
  * @author PC
  */
 public class IngresarCompra extends javax.swing.JFrame {
+    public int numeroDeFilas;
     Conexion enlace = new Conexion();
     Connection conection = enlace.getConexion();
     
     //Variables para calcular el total de la factura
     //para poner publico el nombre del proveedor
     static  String proveedorSeleccionadoNombre;
+    private int paginaActual = 1;
     
-
+  
 
    
-    public IngresarCompra() {
+    public IngresarCompra(int numeroDeFilas) {
         initComponents();
+        this.numeroDeFilas = numeroDeFilas; // Almacena el número de filas en una variable de instancia
+        // Configura el valor del campo txt_Id
+        txt_Id.setText(String.valueOf(numeroDeFilas + 1));
+        
         //para llenar el id y el nombre del proveedor al boton de seleccion desplegable
         llenarProveedor();
         
@@ -105,6 +113,7 @@ public class IngresarCompra extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         btnEliminarP = new javax.swing.JButton();
+        txt_Id = new javax.swing.JTextField();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -197,11 +206,11 @@ public class IngresarCompra extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nombre del producto", "Marca", "Presentación", "Cantidad", "Total"
+                "Nombre del producto", "Marca", "Presentación", "Cantidad", "Precio", "Num."
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true
+                false, false, false, false, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -233,7 +242,7 @@ public class IngresarCompra extends javax.swing.JFrame {
                 btnGuardarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 480, 110, 30));
+        getContentPane().add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 480, 110, 30));
 
         btncancelar.setBackground(new java.awt.Color(253, 253, 253));
         btncancelar.setText("Cancelar");
@@ -290,6 +299,9 @@ public class IngresarCompra extends javax.swing.JFrame {
         });
         getContentPane().add(btnEliminarP, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 260, -1, -1));
 
+        txt_Id.setEditable(false);
+        getContentPane().add(txt_Id, new org.netbeans.lib.awtextra.AbsoluteConstraints(361, 50, 0, 0));
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -306,57 +318,6 @@ public class IngresarCompra extends javax.swing.JFrame {
     private void ProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProveedoresActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ProveedoresActionPerformed
-
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
-        //Guardar factura en la base de datos
-        //variable que guarda la fecha
-        String fcha = ((JTextField)Fecha.getDateEditor().getUiComponent()).getText();
-        
-            
-        
-        try {
-            PreparedStatement guardarCP = conection.prepareStatement("INSERT INTO comprasproductos(numeroFactura,cai,proveedor,tipoDeCompra,fecha)VALUES(?,?,?,?,?)");
-            PreparedStatement guardarDC = conection.prepareStatement("INSERT INTO detallecompra(idCompra,producto,cantidad,tipoProducto,precio)VALUES(?,?,?,?,?)");
-            guardarCP.setString(1,numeroFactura.getText());
-            guardarCP.setString(2,CAI.getText());
-            Proveedor proveedorSeleccionado = (Proveedor) Proveedores.getSelectedItem();
-            if (proveedorSeleccionado != null) {
-                int proveedorSeleccionadoId = proveedorSeleccionado.getId();
-                guardarCP.setInt(3, proveedorSeleccionadoId);
-            }
-            guardarCP.setString(4,tipoCompra.getSelectedItem().toString());
-            guardarCP.setString(5, fcha);
-            //guardar.setDouble(6,totalFactura);
-            
-            //validaciones
-            if(numeroFactura.getText().equals("   -   -  -   ") 
-               || CAI.getText().equals("      -      -      -      -      -  " )||Fecha.getDate()==(null)
-                    || tblProductosCompras.getRowCount() == 0){
-                JOptionPane.showMessageDialog(null,"Hay datos vacios"
-                ,"Error al guardar factura",JOptionPane.WARNING_MESSAGE);   
-            }
-            if(numeroFactura.getText().equals("000-000-00-000")){
-                JOptionPane.showMessageDialog(null,"datos de numero de factura"
-                ,"Error al guardar factura",JOptionPane.WARNING_MESSAGE);
-            }
-            else{
-                
-            guardarCP.executeUpdate();
-            this.dispose();
-            
-             JOptionPane.showMessageDialog(null, "Factura guardada");
-             
-            
-            }
-            
-        } catch (Exception e) {
-             JOptionPane.showMessageDialog(null,"error al registrar la factura Ya existe una factura con estos datos"+e,"No se guardo la factura",
-                    JOptionPane.WARNING_MESSAGE);
-        }
-        
-        
-    }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btncancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncancelarActionPerformed
         // TODO add your handling code here:
@@ -399,12 +360,6 @@ public class IngresarCompra extends javax.swing.JFrame {
         //btnAgregar.setBackground(new Color(204,204,204));
     }//GEN-LAST:event_btnAgregarMouseExited
 
-    private void btnGuardarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseEntered
-        // TODO add your handling code here:
-        //cambiar el color del boton
-        //btnGuardar.setBackground(new Color(135, 206, 235));
-    }//GEN-LAST:event_btnGuardarMouseEntered
-
     private void btnEliminarPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarPActionPerformed
         
         
@@ -418,41 +373,79 @@ public class IngresarCompra extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tipoCompraActionPerformed
 
-    /** 
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(IngresarCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(IngresarCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(IngresarCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(IngresarCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        //Guardar factura en la base de datos
+        //variable que guarda la fecha
+        String fcha = ((JTextField)Fecha.getDateEditor().getUiComponent()).getText();
+        // Obtener el modelo de la tabla
+        DefaultTableModel model = (DefaultTableModel) tblProductosCompras.getModel();
+        //validaciones
+        if(numeroFactura.getText().equals("   -   -  -   ") || CAI.getText().equals("      -      -      -      -      -  " )||Fecha.getDate()==(null))
+        {
+            JOptionPane.showMessageDialog(null,"Hay datos vacios","Error al guardar factura",JOptionPane.WARNING_MESSAGE);
+        }else if(numeroFactura.getText().equals("000-000-00-000")){
+            JOptionPane.showMessageDialog(null,"datos de numero de factura","Error al guardar factura",JOptionPane.WARNING_MESSAGE);
+        }else if (model.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(null, "No hay registros en la tabla para guardar", "Error", JOptionPane.ERROR_MESSAGE);
+        }else{
+            try {
+            PreparedStatement guardarCP = conection.prepareStatement("INSERT INTO comprasproductos(numeroFactura,cai,proveedor,tipoDeCompra,fecha)VALUES(?,?,?,?,?)");
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new IngresarCompra().setVisible(true);
+            guardarCP.setString(1,numeroFactura.getText());
+            guardarCP.setString(2,CAI.getText());
+            Proveedor proveedorSeleccionado = (Proveedor) Proveedores.getSelectedItem();
+            if (proveedorSeleccionado != null) {
+                int proveedorSeleccionadoId = proveedorSeleccionado.getId();
+                guardarCP.setInt(3, proveedorSeleccionadoId);
             }
-        });
-    }
+            guardarCP.setString(4,tipoCompra.getSelectedItem().toString());
+            guardarCP.setString(5, fcha);
+            //guardar.setDouble(6,totalFactura);
+            
+            for (int i = 0; i < model.getRowCount(); i++) {
+                // Obtener los datos de la fila actual
+                int idCompra = Integer.parseInt(txt_Id.getText());
+                String producto = model.getValueAt(i, 0).toString();
+                String presentacion = model.getValueAt(i, 2).toString();
+                int cantidad = Integer.parseInt(model.getValueAt(i, 3).toString());
+                double precio = Double.parseDouble(model.getValueAt(i, 4).toString());
+
+                try {
+                    PreparedStatement guardarDC = conection.prepareStatement("INSERT INTO detallecompra(idCompra,producto,cantidad,tipoProducto,precio)VALUES(?,?,?,?,?)");
+                    // Insertar los datos en la base de datos (personaliza la sentencia SQL)
+                    guardarDC.setInt(1, idCompra);
+                    guardarDC.setString(2, producto);
+                    guardarDC.setInt(3, cantidad);
+                    guardarDC.setString(4, presentacion);
+                    guardarDC.setDouble(5, precio);
+                        guardarCP.executeUpdate();
+                        //this.dispose();
+                        JOptionPane.showMessageDialog(null, "Factura guardada");
+                        Controlador.ComprasProducto.MostrarCompras("", paginaActual, totalPages);
+                        guardarDC.executeUpdate();
+                        // Limpia la tabla después de guardar los registros
+                        model.setRowCount(0);
+                    
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                }           
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null,"error al registrar la factura Ya existe una factura con estos datos"+e,"No se guardo la factura",
+                    JOptionPane.WARNING_MESSAGE);
+            }
+            }
+        
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnGuardarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseEntered
+        // TODO add your handling code here:
+        //cambiar el color del boton
+        //btnGuardar.setBackground(new Color(135, 206, 235));
+    }//GEN-LAST:event_btnGuardarMouseEntered
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFormattedTextField CAI;
@@ -481,6 +474,7 @@ public class IngresarCompra extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField numeroFactura;
     public static javax.swing.JTable tblProductosCompras;
     private javax.swing.JComboBox<String> tipoCompra;
+    public static javax.swing.JTextField txt_Id;
     // End of variables declaration//GEN-END:variables
 
    

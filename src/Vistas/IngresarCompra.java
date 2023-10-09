@@ -402,7 +402,7 @@ public class IngresarCompra extends javax.swing.JFrame {
             guardarCP.setString(4,tipoCompra.getSelectedItem().toString());
             guardarCP.setString(5, fcha);
             //guardar.setDouble(6,totalFactura);
-            
+            guardarCP.executeUpdate();
             for (int i = 0; i < model.getRowCount(); i++) {
                 // Obtener los datos de la fila actual
                 int idCompra = Integer.parseInt(txt_Id.getText());
@@ -419,11 +419,11 @@ public class IngresarCompra extends javax.swing.JFrame {
                     guardarDC.setInt(3, cantidad);
                     guardarDC.setString(4, presentacion);
                     guardarDC.setDouble(5, precio);
-                        guardarCP.executeUpdate();
-                        //this.dispose();
+                    guardarDC.executeUpdate();
+                        this.dispose();
                         JOptionPane.showMessageDialog(null, "Factura guardada");
                         Controlador.ComprasProducto.MostrarCompras("", paginaActual, totalPages);
-                        guardarDC.executeUpdate();
+                        
                         // Limpia la tabla después de guardar los registros
                         model.setRowCount(0);
                     

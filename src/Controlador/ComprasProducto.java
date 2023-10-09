@@ -59,28 +59,28 @@ public class ComprasProducto {
                 }
  
         
-        String datos[] = new String[6];
+        String datos[] = new String[7];
         
         try{
         
             Statement st = conexion.createStatement();
             ResultSet rs = st.executeQuery(sql);
-            
+            int count = 1;
             while(rs.next()){
-                
-                datos[0] = rs.getString("CP.numeroFactura");
-                datos[1] = rs.getString("CP.cai");
-                datos[2] = rs.getString("P.empresa");
-                datos[3] = rs.getString("CP.tipoDeCompra");
-                datos[4] = rs.getString("CP.fecha");
-                datos[5] = rs.getString("CP.id");
+                datos[0] = count +"";
+                datos[1] = rs.getString("CP.numeroFactura");
+                datos[2] = rs.getString("CP.cai");
+                datos[3] = rs.getString("P.empresa");
+                datos[4] = rs.getString("CP.tipoDeCompra");
+                datos[5] = rs.getString("CP.fecha");
+                datos[6] = rs.getString("CP.id");
                 model.addRow(datos);
                 totalPages = NumeroPages();
                 MostrarCompras.seguimiento.setText("Página " + paginaActual + " de " + totalPages);
                 DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
                 tcr.setHorizontalAlignment(SwingConstants.RIGHT);
                 MostrarCompras.tblMostrarCompras.setModel(model);
-                
+                count++;
             }
            
         }catch (SQLException ex){

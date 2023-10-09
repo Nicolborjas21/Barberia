@@ -28,7 +28,7 @@ public class ProductosCuidado {
     private static Connection conexion = con.getConexion();
     private static PreparedStatement ps = null;
     
-    private static final int filasxPagina = 2;   
+    private static final int filasxPagina = 20;   
         public static int NumeroPages(){
                 String sql = ""; 
                 sql = "SELECT count(*) from catalogo_productos";

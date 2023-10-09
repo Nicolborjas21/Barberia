@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableModel;
 import Conexion.Conexion;
 
 import java.awt.Color;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
@@ -22,6 +24,24 @@ public class MostrarCompras extends javax.swing.JPanel {
         tblMostrarCompras.getTableHeader().setReorderingAllowed(false);
         Controlador.ComprasProducto.MostrarCompras("", paginaActual, totalPages);
         //PromptSupport.setPrompt("Buscar por el articulo, departamento y fecha", txtBusqueda);
+        
+        tblMostrarCompras.addMouseListener(new MouseAdapter(){
+            
+            public void mouseClicked(MouseEvent e){
+                if (e.getClickCount()==2){
+                    int fila = tblMostrarCompras.getSelectedRow(); 
+        VerCompras verCompras = new VerCompras(tblMostrarCompras.getValueAt(fila, 5).toString());
+        //JOptionPane.showMessageDialog(null, tblMostrarCompras.getValueAt(fila, 5));
+        verCompras.lblFactura.setText(tblMostrarCompras.getValueAt(fila, 0).toString());
+        verCompras.lblCai.setText(tblMostrarCompras.getValueAt(fila, 1).toString());
+        verCompras.lblProveedor.setText(tblMostrarCompras.getValueAt(fila, 2).toString());
+        verCompras.lblContado.setText(tblMostrarCompras.getValueAt(fila, 3).toString());
+        verCompras.lblFecha.setText(tblMostrarCompras.getValueAt(fila, 4).toString());
+        
+        verCompras.setVisible(true);
+                }
+            }
+        });
       
     }
     
@@ -44,7 +64,6 @@ public class MostrarCompras extends javax.swing.JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblMostrarCompras = new javax.swing.JTable();
         btnNuevo = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -124,13 +143,6 @@ public class MostrarCompras extends javax.swing.JPanel {
             }
         });
 
-        jButton1.setText("Ver");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -156,9 +168,7 @@ public class MostrarCompras extends javax.swing.JPanel {
                         .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnNuevo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addGap(154, 154, 154))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -167,8 +177,7 @@ public class MostrarCompras extends javax.swing.JPanel {
                 .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnNuevo)
-                    .addComponent(jButton1))
+                    .addComponent(btnNuevo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38)
@@ -235,25 +244,11 @@ public class MostrarCompras extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnNuevoActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        int fila = tblMostrarCompras.getSelectedRow(); 
-        VerCompras verCompras = new VerCompras(tblMostrarCompras.getValueAt(fila, 5).toString());
-        //JOptionPane.showMessageDialog(null, tblMostrarCompras.getValueAt(fila, 5));
-        verCompras.lblFactura.setText(tblMostrarCompras.getValueAt(fila, 0).toString());
-        verCompras.lblCai.setText(tblMostrarCompras.getValueAt(fila, 1).toString());
-        verCompras.lblProveedor.setText(tblMostrarCompras.getValueAt(fila, 2).toString());
-        verCompras.lblContado.setText(tblMostrarCompras.getValueAt(fila, 3).toString());
-        verCompras.lblFecha.setText(tblMostrarCompras.getValueAt(fila, 4).toString());
-        
-        verCompras.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JButton btnAdelante;
     public static javax.swing.JButton btnAtras;
     public static javax.swing.JButton btnNuevo;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
     public static javax.swing.JLabel seguimiento;

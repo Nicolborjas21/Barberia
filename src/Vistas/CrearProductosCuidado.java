@@ -15,7 +15,8 @@ import java.util.regex.Pattern;
  * @author Admin
  */
 public class CrearProductosCuidado extends javax.swing.JFrame {
-
+    private int paginaActual = 1;
+    public static int totalPages = Controlador.ProductosCuidado.NumeroPages();
     /**
      * Creates new form CrearProductosCuidado
      */
@@ -210,6 +211,9 @@ public class CrearProductosCuidado extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "Nuevo producto de cuidado ingresado");
                 
                 dispose();
+                
+                Controlador.ProductosCuidado.MostrarProductosCuidado("", paginaActual, totalPages);
+                
             } else {
                 JOptionPane.showMessageDialog(this, "Algo salio mal");
             }

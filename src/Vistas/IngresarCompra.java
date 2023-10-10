@@ -93,8 +93,6 @@ public class IngresarCompra extends javax.swing.JFrame {
         jTable2 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        tipoCompra = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         Proveedores = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
@@ -151,17 +149,6 @@ public class IngresarCompra extends javax.swing.JFrame {
         jLabel2.setText("No. de Factura");
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 53, -1, -1));
 
-        jLabel3.setText("Tipo de Compra:");
-        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, -1, -1));
-
-        tipoCompra.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Credito", "Contado", "Normal", "Donación" }));
-        tipoCompra.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tipoCompraActionPerformed(evt);
-            }
-        });
-        getContentPane().add(tipoCompra, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 140, 176, -1));
-
         jLabel4.setText("Proveedor:");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, 20));
 
@@ -174,10 +161,10 @@ public class IngresarCompra extends javax.swing.JFrame {
         getContentPane().add(Proveedores, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, 176, -1));
 
         jLabel5.setText("Fecha");
-        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, -1, -1));
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, -1, -1));
 
         jLabel6.setText("CAI:");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, -1, -1));
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, -1, 20));
 
         jLabel9.setText("Productos: ");
         getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, -1, -1));
@@ -198,7 +185,7 @@ public class IngresarCompra extends javax.swing.JFrame {
                 btnAgregarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 200, 180, 40));
+        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 180, 180, 40));
         getContentPane().add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 404, 10));
 
         tblProductosCompras.setModel(new javax.swing.table.DefaultTableModel(
@@ -206,11 +193,11 @@ public class IngresarCompra extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Nombre del producto", "Marca", "Presentación", "Cantidad", "Precio", "Num."
+                "Nombre del producto", "Marca", "Presentación", "Cantidad", "Precio", "Total"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, true, true
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -228,7 +215,7 @@ public class IngresarCompra extends javax.swing.JFrame {
                 FechaKeyTyped(evt);
             }
         });
-        getContentPane().add(Fecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 170, 176, -1));
+        getContentPane().add(Fecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 140, 176, -1));
 
         btnGuardar.setBackground(new java.awt.Color(253, 253, 253));
         btnGuardar.setText("Guardar");
@@ -369,10 +356,6 @@ public class IngresarCompra extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_CAIActionPerformed
 
-    private void tipoCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoCompraActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tipoCompraActionPerformed
-
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
         //Guardar factura en la base de datos
@@ -380,6 +363,7 @@ public class IngresarCompra extends javax.swing.JFrame {
         String fcha = ((JTextField)Fecha.getDateEditor().getUiComponent()).getText();
         // Obtener el modelo de la tabla
         DefaultTableModel model = (DefaultTableModel) tblProductosCompras.getModel();
+        String TipoDeCompra ="Al contado";
         //validaciones
         if(numeroFactura.getText().equals("   -   -  -   ") || CAI.getText().equals("      -      -      -      -      -  " )||Fecha.getDate()==(null))
         {
@@ -390,53 +374,66 @@ public class IngresarCompra extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "No hay registros en la tabla para guardar", "Error", JOptionPane.ERROR_MESSAGE);
         }else{
             try {
-            PreparedStatement guardarCP = conection.prepareStatement("INSERT INTO comprasproductos(numeroFactura,cai,proveedor,tipoDeCompra,fecha)VALUES(?,?,?,?,?)");
+                PreparedStatement guardarCP = conection.prepareStatement("INSERT INTO comprasproductos(numeroFactura,cai,proveedor,tipoDeCompra,fecha)VALUES(?,?,?,?,?)");
+                guardarCP.setString(1,numeroFactura.getText());
+                guardarCP.setString(2,CAI.getText());
+                Proveedor proveedorSeleccionado = (Proveedor) Proveedores.getSelectedItem();
+                if (proveedorSeleccionado != null) {
+                    int proveedorSeleccionadoId = proveedorSeleccionado.getId();
+                    guardarCP.setInt(3, proveedorSeleccionadoId);
+                }
+                guardarCP.setString(4,TipoDeCompra);
+                guardarCP.setString(5, fcha);
+                //guardar.setDouble(6,totalFactura);
+                guardarCP.executeUpdate();
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    // Obtener los datos de la fila actual
+                    int idCompra = Integer.parseInt(txt_Id.getText());
+                    String producto = model.getValueAt(i, 0).toString();
+                    String Marca = model.getValueAt(i, 1).toString();
+                    String presentacion = model.getValueAt(i, 2).toString();
+                    int cantidad = Integer.parseInt(model.getValueAt(i, 3).toString());
+                    double precio = Double.parseDouble(model.getValueAt(i, 4).toString());
 
-            guardarCP.setString(1,numeroFactura.getText());
-            guardarCP.setString(2,CAI.getText());
-            Proveedor proveedorSeleccionado = (Proveedor) Proveedores.getSelectedItem();
-            if (proveedorSeleccionado != null) {
-                int proveedorSeleccionadoId = proveedorSeleccionado.getId();
-                guardarCP.setInt(3, proveedorSeleccionadoId);
-            }
-            guardarCP.setString(4,tipoCompra.getSelectedItem().toString());
-            guardarCP.setString(5, fcha);
-            //guardar.setDouble(6,totalFactura);
-            guardarCP.executeUpdate();
-            for (int i = 0; i < model.getRowCount(); i++) {
-                // Obtener los datos de la fila actual
-                int idCompra = Integer.parseInt(txt_Id.getText());
-                String producto = model.getValueAt(i, 0).toString();
-                String presentacion = model.getValueAt(i, 2).toString();
-                int cantidad = Integer.parseInt(model.getValueAt(i, 3).toString());
-                double precio = Double.parseDouble(model.getValueAt(i, 4).toString());
-
-                try {
-                    PreparedStatement guardarDC = conection.prepareStatement("INSERT INTO detallecompra(idCompra,producto,cantidad,tipoProducto,precio)VALUES(?,?,?,?,?)");
-                    // Insertar los datos en la base de datos (personaliza la sentencia SQL)
-                    guardarDC.setInt(1, idCompra);
-                    guardarDC.setString(2, producto);
-                    guardarDC.setInt(3, cantidad);
-                    guardarDC.setString(4, presentacion);
-                    guardarDC.setDouble(5, precio);
-                    guardarDC.executeUpdate();
-                        this.dispose();
+                    try {
+                        PreparedStatement guardarDC = conection.prepareStatement("INSERT INTO detallecompra(idCompra,producto,cantidad,tipoProducto,precio)VALUES(?,?,?,?,?)");
+                        // Insertar los datos en la base de datos (personaliza la sentencia SQL)
+                        guardarDC.setInt(1, idCompra);
+                        guardarDC.setString(2, producto);
+                        guardarDC.setInt(3, cantidad);
+                        guardarDC.setString(4, presentacion);
+                        guardarDC.setDouble(5, precio);
+                        guardarDC.executeUpdate();
+                        //this.dispose();
                         JOptionPane.showMessageDialog(null, "Factura guardada");
                         Controlador.ComprasProducto.MostrarCompras("", paginaActual, totalPages);
-                        
                         // Limpia la tabla después de guardar los registros
                         model.setRowCount(0);
-                    
-                } catch (SQLException e) {
-                    JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                }
+                        } catch (SQLException e) {
+                            JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    try {
+                        PreparedStatement guardarIP = conection.prepareStatement("INSERT INTO inventarioproductos(Producto,Marca,tipoProducto,Cantidad,Precio)VALUES(?,?,?,?,?)");
+                        // Insertar los datos en la base de datos (personaliza la sentencia SQL)
+                        guardarIP.setString(1, producto);
+                        guardarIP.setString(2, Marca);
+                        guardarIP.setString(3, presentacion);
+                        guardarIP.setInt(4, cantidad);
+                        guardarIP.setDouble(5, precio);
+                        guardarIP.executeUpdate();
+                        this.dispose();
+                        Controlador.ComprasProducto.MostrarCompras("", paginaActual, totalPages);
+                        // Limpia la tabla después de guardar los registros
+                        model.setRowCount(0);
+                        } catch (SQLException e) {
+                            JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                 }           
-            } catch (Exception e) {
+            }catch (Exception e) {
                 JOptionPane.showMessageDialog(null,"error al registrar la factura Ya existe una factura con estos datos"+e,"No se guardo la factura",
                     JOptionPane.WARNING_MESSAGE);
-            }
-            }
-        
+                }
+        }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnGuardarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnGuardarMouseEntered
@@ -458,7 +455,6 @@ public class IngresarCompra extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -473,7 +469,6 @@ public class IngresarCompra extends javax.swing.JFrame {
     private javax.swing.JTable jTable2;
     private javax.swing.JFormattedTextField numeroFactura;
     public static javax.swing.JTable tblProductosCompras;
-    private javax.swing.JComboBox<String> tipoCompra;
     public static javax.swing.JTextField txt_Id;
     // End of variables declaration//GEN-END:variables
 

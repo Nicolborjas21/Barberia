@@ -5,16 +5,18 @@
 package Vistas;
 
 import Conexion.Conexion;
-import Conexion.ModeloProveedores;
+// import Modelos.ModeloProveedores;
 import java.util.ArrayList;
 import java.sql.Connection;
 import javax.swing.JOptionPane;
 import java.sql.*;
 import Clases.Proveedor;
+import Conexion.ModeloProveedores;
 import static Vistas.MostrarCompras.totalPages;
 import javax.swing.JTextField;
 import java.util.Date;
 import javax.swing.table.DefaultTableModel;
+import java.util.Calendar;
 
 
 
@@ -44,12 +46,26 @@ public class IngresarCompra extends javax.swing.JFrame {
         //para llenar el id y el nombre del proveedor al boton de seleccion desplegable
         llenarProveedor();
         
-        //para que la fecha no sea mayor a la actual y menor que la actual
-        Fecha.setMaxSelectableDate(new Date());
-        Fecha.setMinSelectableDate(new Date());
+      // Obtener la fecha actual
+    Calendar calendario = Calendar.getInstance();
+    Date fechaActual = calendario.getTime();
+
+    // Restar 2 meses a la fecha actual
+    calendario.add(Calendar.MONTH, -2);
+    Date fechaMinima = calendario.getTime();
+
+    // Establecer la fecha máxima y mínima seleccionable en el componente Fecha
+    Fecha.setMaxSelectableDate(fechaActual);
+    Fecha.setMinSelectableDate(fechaMinima);
         
         //Inicializando la variable para calcular el total de la factura
         //totalFactura = 0.0;     
+          DefaultTableModel model = (DefaultTableModel) tblProductosCompras.getModel();
+
+        model.addTableModelListener(e -> {
+            calcularTotalFactura();
+        });
+
     }  
     
     
@@ -112,6 +128,7 @@ public class IngresarCompra extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         btnEliminarP = new javax.swing.JButton();
         txt_Id = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -140,17 +157,15 @@ public class IngresarCompra extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTable2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        setBackground(new java.awt.Color(255, 255, 255));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 3, 18)); // NOI18N
         jLabel1.setText("Ingresar Compra");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(132, 0, -1, 28));
 
         jLabel2.setText("No. de Factura");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 53, -1, -1));
 
         jLabel4.setText("Proveedor:");
-        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, 20));
 
         Proveedores.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "" }));
         Proveedores.addActionListener(new java.awt.event.ActionListener() {
@@ -158,17 +173,12 @@ public class IngresarCompra extends javax.swing.JFrame {
                 ProveedoresActionPerformed(evt);
             }
         });
-        getContentPane().add(Proveedores, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, 176, -1));
 
         jLabel5.setText("Fecha");
-        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, -1, -1));
 
         jLabel6.setText("CAI:");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, -1, 20));
 
         jLabel9.setText("Productos: ");
-        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, -1, -1));
-        getContentPane().add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 34, 390, 10));
 
         btnAgregar.setBackground(new java.awt.Color(253, 253, 253));
         btnAgregar.setText("Agregar producto");
@@ -185,15 +195,13 @@ public class IngresarCompra extends javax.swing.JFrame {
                 btnAgregarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 180, 180, 40));
-        getContentPane().add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 250, 404, 10));
 
         tblProductosCompras.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Nombre del producto", "Marca", "Presentación", "Cantidad", "Precio", "Total"
+                "Nombre del producto", "Marca", "Presentación", "Cantidad", "Precio", "Subtotal"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -206,8 +214,6 @@ public class IngresarCompra extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(tblProductosCompras);
 
-        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 290, 420, 178));
-
         Fecha.setToolTipText("");
         Fecha.setDateFormatString("yyyy/MM/dd");
         Fecha.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -215,7 +221,6 @@ public class IngresarCompra extends javax.swing.JFrame {
                 FechaKeyTyped(evt);
             }
         });
-        getContentPane().add(Fecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 140, 176, -1));
 
         btnGuardar.setBackground(new java.awt.Color(253, 253, 253));
         btnGuardar.setText("Guardar");
@@ -229,7 +234,6 @@ public class IngresarCompra extends javax.swing.JFrame {
                 btnGuardarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 480, 110, 30));
 
         btncancelar.setBackground(new java.awt.Color(253, 253, 253));
         btncancelar.setText("Cancelar");
@@ -238,7 +242,6 @@ public class IngresarCompra extends javax.swing.JFrame {
                 btncancelarActionPerformed(evt);
             }
         });
-        getContentPane().add(btncancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 480, 120, 30));
 
         try {
             numeroFactura.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("###-###-##-###")));
@@ -255,7 +258,6 @@ public class IngresarCompra extends javax.swing.JFrame {
                 numeroFacturaKeyTyped(evt);
             }
         });
-        getContentPane().add(numeroFactura, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 50, 177, -1));
 
         try {
             CAI.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("#UU#U#-##U#U#-U###UU-U##U#U-U#UU#U-#U")));
@@ -272,11 +274,6 @@ public class IngresarCompra extends javax.swing.JFrame {
                 CAIKeyTyped(evt);
             }
         });
-        getContentPane().add(CAI, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 80, 177, -1));
-        CAI.getAccessibleContext().setAccessibleParent(CAI);
-
-        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(331, 191, -1, -1));
-        getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(-100, -180, 520, -1));
 
         btnEliminarP.setText("Eliminar producto");
         btnEliminarP.addActionListener(new java.awt.event.ActionListener() {
@@ -284,13 +281,140 @@ public class IngresarCompra extends javax.swing.JFrame {
                 btnEliminarPActionPerformed(evt);
             }
         });
-        getContentPane().add(btnEliminarP, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 260, -1, -1));
 
         txt_Id.setEditable(false);
-        getContentPane().add(txt_Id, new org.netbeans.lib.awtextra.AbsoluteConstraints(361, 50, 0, 0));
+
+        jLabel3.setText("Total: ");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(211, 211, 211)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(33, 33, 33)
+                        .addComponent(numeroFactura, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(88, 88, 88)
+                        .addComponent(CAI, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(53, 53, 53)
+                        .addComponent(Proveedores, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(220, 220, 220)
+                        .addComponent(jLabel7))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(79, 79, 79)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Fecha, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_Id, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addComponent(jLabel1)
+                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btncancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(506, 506, 506)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 870, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 870, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 875, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel9)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEliminarP)))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel2))
+                    .addComponent(numeroFactura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_Id, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CAI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Proveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(Fecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23)
+                .addComponent(btnAgregar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel7)
+                .addGap(0, 0, 0)
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEliminarP)
+                    .addComponent(jLabel9))
+                .addGap(7, 7, 7)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btncancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel3))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        CAI.getAccessibleContext().setAccessibleParent(CAI);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnEliminarPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarPActionPerformed
+        DefaultTableModel model = (DefaultTableModel) tblProductosCompras.getModel();
+        int selectedRow = tblProductosCompras.getSelectedRow();
+
+        if (selectedRow != -1) {
+            // Si hay una fila seleccionada, elimina solo esa fila
+            model.removeRow(selectedRow);
+        } else {
+            // Si no hay fila seleccionada, preguntar al usuario si quiere borrar todo
+            int response = JOptionPane.showConfirmDialog(null, "¿Desea eliminar todas las filas?", "Confirmar", JOptionPane.YES_NO_OPTION);
+
+            if (response == JOptionPane.YES_OPTION) {
+                // Si el usuario elige "Sí", elimina todas las filas
+                int rowCount = model.getRowCount();
+                for (int i = rowCount - 1; i >= 0; i--) {
+                    model.removeRow(i);
+                }
+            } else if (response == JOptionPane.NO_OPTION) {
+                // Si el usuario elige "No", informar que debe seleccionar una fila para eliminar
+                JOptionPane.showMessageDialog(null, "Por favor, seleccione un producto para eliminar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            }
+            // Si el usuario elige "No" o cierra la ventana de confirmación, no se hace nada.
+        }
+    }//GEN-LAST:event_btnEliminarPActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         // TODO add your handling code here:
@@ -298,23 +422,27 @@ public class IngresarCompra extends javax.swing.JFrame {
         ProductoParaCompra prod = new ProductoParaCompra();
         prod.setVisible(true);
         prod.setLocationRelativeTo(null);
-        
-        
     }//GEN-LAST:event_btnAgregarActionPerformed
 
-    private void ProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProveedoresActionPerformed
+    private void btnAgregarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseExited
         // TODO add your handling code here:
-    }//GEN-LAST:event_ProveedoresActionPerformed
+        //cambiar el color del boton al salir
+        //btnAgregar.setBackground(new Color(204,204,204));
+    }//GEN-LAST:event_btnAgregarMouseExited
 
-    private void btncancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncancelarActionPerformed
+    private void btnAgregarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseEntered
         // TODO add your handling code here:
-        this.dispose();
-    }//GEN-LAST:event_btncancelarActionPerformed
+        //cambiar el color del boton
+        //btnAgregar.setBackground(new Color(42, 126, 126));
+    }//GEN-LAST:event_btnAgregarMouseEntered
 
-    private void FechaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_FechaKeyTyped
+    private void CAIKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CAIKeyTyped
         // TODO add your handling code here:
+    }//GEN-LAST:event_CAIKeyTyped
 
-    }//GEN-LAST:event_FechaKeyTyped
+    private void CAIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CAIActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_CAIActionPerformed
 
     private void numeroFacturaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_numeroFacturaKeyTyped
         // TODO add your handling code here:
@@ -325,36 +453,18 @@ public class IngresarCompra extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_numeroFacturaKeyTyped
 
-    private void CAIKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_CAIKeyTyped
-        // TODO add your handling code here:
-        
-        
-    }//GEN-LAST:event_CAIKeyTyped
-
     private void numeroFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numeroFacturaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_numeroFacturaActionPerformed
 
-    private void btnAgregarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseEntered
+    private void btncancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btncancelarActionPerformed
         // TODO add your handling code here:
-        //cambiar el color del boton
-        //btnAgregar.setBackground(new Color(42, 126, 126));
-    }//GEN-LAST:event_btnAgregarMouseEntered
+        this.dispose();
+    }//GEN-LAST:event_btncancelarActionPerformed
 
-    private void btnAgregarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseExited
+    private void ProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ProveedoresActionPerformed
         // TODO add your handling code here:
-        //cambiar el color del boton al salir 
-        //btnAgregar.setBackground(new Color(204,204,204));
-    }//GEN-LAST:event_btnAgregarMouseExited
-
-    private void btnEliminarPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarPActionPerformed
-        
-        
-    }//GEN-LAST:event_btnEliminarPActionPerformed
-
-    private void CAIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CAIActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_CAIActionPerformed
+    }//GEN-LAST:event_ProveedoresActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
@@ -374,7 +484,7 @@ public class IngresarCompra extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "No hay registros en la tabla para guardar", "Error", JOptionPane.ERROR_MESSAGE);
         }else{
             try {
-                PreparedStatement guardarCP = conection.prepareStatement("INSERT INTO comprasproductos(numeroFactura,cai,proveedor,tipoDeCompra,fecha)VALUES(?,?,?,?,?)");
+                PreparedStatement guardarCP = conection.prepareStatement("INSERT INTO comprasproductos(numeroFactura,cai,proveedor,tipoDeCompra,fecha,total)VALUES(?,?,?,?,?,?)");
                 guardarCP.setString(1,numeroFactura.getText());
                 guardarCP.setString(2,CAI.getText());
                 Proveedor proveedorSeleccionado = (Proveedor) Proveedores.getSelectedItem();
@@ -384,7 +494,7 @@ public class IngresarCompra extends javax.swing.JFrame {
                 }
                 guardarCP.setString(4,TipoDeCompra);
                 guardarCP.setString(5, fcha);
-                //guardar.setDouble(6,totalFactura);
+                guardarCP.setDouble(6,totalFactura);
                 guardarCP.executeUpdate();
                 for (int i = 0; i < model.getRowCount(); i++) {
                     // Obtener los datos de la fila actual
@@ -409,9 +519,9 @@ public class IngresarCompra extends javax.swing.JFrame {
                         Controlador.ComprasProducto.MostrarCompras("", paginaActual, totalPages);
                         // Limpia la tabla después de guardar los registros
                         model.setRowCount(0);
-                        } catch (SQLException e) {
-                            JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                        }
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                     try {
                         PreparedStatement guardarIP = conection.prepareStatement("INSERT INTO inventarioproductos(Producto,Marca,tipoProducto,Cantidad,Precio)VALUES(?,?,?,?,?)");
                         // Insertar los datos en la base de datos (personaliza la sentencia SQL)
@@ -425,14 +535,14 @@ public class IngresarCompra extends javax.swing.JFrame {
                         Controlador.ComprasProducto.MostrarCompras("", paginaActual, totalPages);
                         // Limpia la tabla después de guardar los registros
                         model.setRowCount(0);
-                        } catch (SQLException e) {
-                            JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                }           
+                    } catch (SQLException e) {
+                        JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
             }catch (Exception e) {
                 JOptionPane.showMessageDialog(null,"error al registrar la factura Ya existe una factura con estos datos"+e,"No se guardo la factura",
                     JOptionPane.WARNING_MESSAGE);
-                }
+            }
         }
     }//GEN-LAST:event_btnGuardarActionPerformed
 
@@ -441,6 +551,23 @@ public class IngresarCompra extends javax.swing.JFrame {
         //cambiar el color del boton
         //btnGuardar.setBackground(new Color(135, 206, 235));
     }//GEN-LAST:event_btnGuardarMouseEntered
+
+    private void FechaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_FechaKeyTyped
+        // TODO add your handling code here:
+    }//GEN-LAST:event_FechaKeyTyped
+    private double totalFactura = 0.0;
+
+    private void calcularTotalFactura() {
+        DefaultTableModel model = (DefaultTableModel) tblProductosCompras.getModel();
+        totalFactura = 0.0;
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            double subtotal = Double.parseDouble(model.getValueAt(i, 5).toString());
+            totalFactura += subtotal;
+        }
+
+        jLabel3.setText("Total: " + totalFactura);
+    }
 
 
 
@@ -455,6 +582,7 @@ public class IngresarCompra extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

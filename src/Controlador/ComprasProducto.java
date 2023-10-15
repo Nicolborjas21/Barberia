@@ -53,13 +53,13 @@ public class ComprasProducto {
         }
         String sql = "";
                 if (buscar.isEmpty()) {
-                sql = "SELECT CP.id, CP.numeroFactura, CP.cai, P.empresa, CP.tipoDeCompra, CP.fecha FROM comprasproductos AS CP JOIN provedores AS P ON CP.proveedor = P.id WHERE CP.fecha LIKE '%" + buscar + "%' or "+" P.empresa LIKE '%" + buscar + "%' or "+"CP.numeroFactura LIKE'%" + buscar + "%' limit " + filasxPagina + " offset " + (paginaActual - 1) * filasxPagina;
+                sql = "SELECT CP.id, CP.numeroFactura, CP.cai, P.empresa, CP.tipoDeCompra, CP.fecha, CP.total FROM comprasproductos AS CP JOIN provedores AS P ON CP.proveedor = P.id WHERE CP.fecha LIKE '%" + buscar + "%' or "+" P.empresa LIKE '%" + buscar + "%' or "+"CP.numeroFactura LIKE'%" + buscar + "%' limit " + filasxPagina + " offset " + (paginaActual - 1) * filasxPagina;
                 } else {
-                sql = "SELECT CP.id, CP.numeroFactura, CP.cai, P.empresa, CP.tipoDeCompra, CP.fecha FROM comprasproductos AS CP JOIN provedores AS P ON CP.proveedor = P.id WHERE CP.fecha LIKE '%" + buscar + "%' or "+"P.empresa LIKE '%" + buscar + "%' or "+"CP.numeroFactura LIKE'%" + buscar + "%'";
+                sql = "SELECT CP.id, CP.numeroFactura, CP.cai, P.empresa, CP.tipoDeCompra, CP.fecha, CP.total FROM comprasproductos AS CP JOIN provedores AS P ON CP.proveedor = P.id WHERE CP.fecha LIKE '%" + buscar + "%' or "+"P.empresa LIKE '%" + buscar + "%' or "+"CP.numeroFactura LIKE'%" + buscar + "%'";
                 }
  
         
-        String datos[] = new String[7];
+        String datos[] = new String[8];
         
         try{
         
@@ -73,7 +73,8 @@ public class ComprasProducto {
                 datos[3] = rs.getString("P.empresa");
                 datos[4] = rs.getString("CP.tipoDeCompra");
                 datos[5] = rs.getString("CP.fecha");
-                datos[6] = rs.getString("CP.id");
+                datos[6] = rs.getString("CP.total");
+                datos[7] = rs.getString("CP.id");
                 model.addRow(datos);
                 totalPages = NumeroPages();
                 MostrarCompras.seguimiento.setText("Página " + paginaActual + " de " + totalPages);

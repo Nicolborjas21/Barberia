@@ -8,10 +8,9 @@ import javax.swing.table.DefaultTableModel;
 import Conexion.Conexion;
 
 import java.awt.Color;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import javax.swing.JOptionPane;
+
 import javax.swing.JTextField;
+import org.jdesktop.swingx.prompt.PromptSupport;
 
 
 public class MostrarCompras extends javax.swing.JPanel {
@@ -21,7 +20,7 @@ public class MostrarCompras extends javax.swing.JPanel {
         initComponents();
         tblMostrarCompras.getTableHeader().setReorderingAllowed(false);
         Controlador.ComprasProducto.MostrarCompras("", paginaActual, totalPages);
-        //PromptSupport.setPrompt("Buscar por el articulo, departamento y fecha", txtBusqueda);
+        PromptSupport.setPrompt("Buscar por el fecha, empresa y número de factura", txtBusqueda);
       
     }
     
@@ -45,6 +44,7 @@ public class MostrarCompras extends javax.swing.JPanel {
         tblMostrarCompras = new javax.swing.JTable();
         btnNuevo = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -60,11 +60,6 @@ public class MostrarCompras extends javax.swing.JPanel {
                 txtBusquedaFocusLost(evt);
             }
         });
-        txtBusqueda.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBusquedaActionPerformed(evt);
-            }
-        });
         txtBusqueda.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtBusquedaKeyReleased(evt);
@@ -72,7 +67,7 @@ public class MostrarCompras extends javax.swing.JPanel {
         });
 
         btnAtras.setBackground(new java.awt.Color(255, 255, 248));
-        btnAtras.setText("Atras");
+        btnAtras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/boton_atras.png"))); // NOI18N
         btnAtras.setToolTipText("");
         btnAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -81,7 +76,7 @@ public class MostrarCompras extends javax.swing.JPanel {
         });
 
         btnAdelante.setBackground(new java.awt.Color(255, 255, 248));
-        btnAdelante.setText("Adelante");
+        btnAdelante.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/boton_delante.png"))); // NOI18N
         btnAdelante.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAdelanteActionPerformed(evt);
@@ -92,17 +87,17 @@ public class MostrarCompras extends javax.swing.JPanel {
 
         tblMostrarCompras.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Num.", "Num. De Factura", "CAI", "Empresa", "Tipo de compra", "Fecha", "ID"
+                "Num.", "Num. De Factura", "CAI", "Empresa", "Tipo de compra", "Fecha", "Total", "ID"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -113,11 +108,13 @@ public class MostrarCompras extends javax.swing.JPanel {
         if (tblMostrarCompras.getColumnModel().getColumnCount() > 0) {
             tblMostrarCompras.getColumnModel().getColumn(0).setMinWidth(50);
             tblMostrarCompras.getColumnModel().getColumn(0).setMaxWidth(50);
-            tblMostrarCompras.getColumnModel().getColumn(6).setMinWidth(0);
-            tblMostrarCompras.getColumnModel().getColumn(6).setMaxWidth(0);
+            tblMostrarCompras.getColumnModel().getColumn(6).setResizable(false);
+            tblMostrarCompras.getColumnModel().getColumn(7).setMinWidth(0);
+            tblMostrarCompras.getColumnModel().getColumn(7).setMaxWidth(0);
         }
 
         btnNuevo.setBackground(new java.awt.Color(255, 255, 248));
+        btnNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/agregar.png"))); // NOI18N
         btnNuevo.setText("Nuevo");
         btnNuevo.setToolTipText("");
         btnNuevo.addActionListener(new java.awt.event.ActionListener() {
@@ -126,12 +123,17 @@ public class MostrarCompras extends javax.swing.JPanel {
             }
         });
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/lupa.jpg"))); // NOI18N
         jButton1.setText("Ver");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/lupa.jpg"))); // NOI18N
+        jLabel4.setText("Buscar ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -140,59 +142,60 @@ public class MostrarCompras extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(349, 349, 349)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(337, 337, 337))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnAtras)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnAdelante)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(seguimiento))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 817, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnAtras)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnAdelante)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seguimiento)
+                        .addGap(631, 766, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(338, 338, 338)
+                                .addComponent(jButton1))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 817, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
                         .addComponent(btnNuevo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addGap(154, 154, 154))))
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(333, 333, 333)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(12, 12, 12)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnNuevo)
-                    .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
+                    .addComponent(jButton1)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnAdelante)
-                        .addComponent(seguimiento))
-                    .addComponent(btnAtras))
-                .addGap(37, 37, 37))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(btnNuevo)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAdelante)
+                    .addComponent(btnAtras)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(seguimiento)))
+                .addGap(20, 20, 20))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtBusquedaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBusquedaActionPerformed
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_txtBusquedaActionPerformed
-
     private void txtBusquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyReleased
-        // TODO add your handling code here:
-        //codigo para el cuadro de busqueda en el JTextfield
-
-        
+        String textoBusqueda = txtBusqueda.getText();
+        Controlador.ComprasProducto.MostrarCompras(textoBusqueda, paginaActual, totalPages);
     }//GEN-LAST:event_txtBusquedaKeyReleased
 
     private void txtBusquedaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBusquedaFocusGained
@@ -260,6 +263,7 @@ public class MostrarCompras extends javax.swing.JPanel {
     public static javax.swing.JButton btnNuevo;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane2;
     public static javax.swing.JLabel seguimiento;
     public static javax.swing.JTable tblMostrarCompras;

@@ -15,6 +15,7 @@ public class QuerysComprasProducto {
     private String tipoDeCompra;
     private int fk_proveedor;
     private String fecha;
+    private int total;
     
     public int getId() {
         return id;
@@ -66,6 +67,13 @@ public class QuerysComprasProducto {
     }
 
    
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
     
     public static String LISTARCOMPRAS = "SELECT * FROM comprasproductos";
 }

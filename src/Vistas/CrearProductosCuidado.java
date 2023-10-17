@@ -7,6 +7,8 @@ package Vistas;
 import ConsultasSQL.QuerysProductosCuidados;
 import javax.swing.JOptionPane;
 import Controlador.ProductosCuidado;
+import static Vistas.MostrarProductosCuidado.ListadoProductos;
+import static Vistas.MostrarProductosCuidado.totalPages;
 import java.awt.Color;
 
 /**
@@ -15,7 +17,7 @@ import java.awt.Color;
  */
 public class CrearProductosCuidado extends javax.swing.JFrame {
     private int paginaActual = 1;
-    public static int totalPages = Controlador.ProductosCuidado.NumeroPages();
+    public static int totalPages ;
     /**
      * Creates new form CrearProductosCuidado
      */
@@ -245,7 +247,8 @@ JOptionPane.showMessageDialog(this, "La descripción del producto no puede estar
                 
                 dispose();
                 
-                Controlador.ProductosCuidado.MostrarProductosCuidado("", paginaActual, totalPages);
+                Controlador.ProductosCuidado.MostrarProductosCuidado("", paginaActual, totalPages, ListadoProductos.getModel().getSelectedItem().toString());
+        
                 
             } else {
                 JOptionPane.showMessageDialog(this, "Algo salio mal");

@@ -11,9 +11,10 @@ package Clases;
 public class Proveedor {
     private int id;
     private String nombre;
+    private String empresa;
     
-    public  Proveedor(int id, String nombre){   
-        this.nombre = nombre;
+    public  Proveedor(int id, String empresa){   
+        this.empresa = empresa;
         this. id = id;
         
     }
@@ -34,8 +35,16 @@ public class Proveedor {
         this.nombre = nombre;
     }
     
+        public String getEmpresa() {
+        return empresa;
+    }
+
+    public void setEmpresa(String empresa) {
+        this.empresa = empresa;
+    }
+    
     public String toString(){
-        return id+ " - "+ nombre;
+        return id+ " - "+ empresa;
     }
     
     

@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableModel;
 import Conexion.Conexion;
 
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 import javax.swing.JTextField;
 import org.jdesktop.swingx.prompt.PromptSupport;
@@ -229,26 +230,34 @@ public class MostrarCompras extends javax.swing.JPanel {
             Controlador.ComprasProducto.MostrarCompras(txtBusqueda.getText(), paginaActual, totalPages);
         }
     }//GEN-LAST:event_btnAdelanteActionPerformed
-
+    
+    
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        int numeroDeFilas = tblMostrarCompras.getRowCount();
-        IngresarCompra compras = new IngresarCompra(numeroDeFilas);
+//        int filaCount = tblMostrarCompras.getRowCount();
+//        int numeroDeFilas = 1;
+//        if (filaCount > 0) {
+//            String ultimoNumero = tblMostrarCompras.getValueAt(filaCount - 1, 0).toString();
+//            numeroDeFilas = Integer.parseInt(ultimoNumero) + 1;
+//        }
+
+//        IngresarCompra compras = new IngresarCompra(numeroDeFilas);
+        IngresarCompra compras = new IngresarCompra();
         compras.setVisible(true);
         compras.setLocationRelativeTo(null);
+
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void tblMostrarComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMostrarComprasMouseClicked
         
         if(evt.getClickCount() == 2){
             int fila = tblMostrarCompras.getSelectedRow(); 
-            VerCompras verCompras = new VerCompras(tblMostrarCompras.getValueAt(fila, 5).toString());
-            //JOptionPane.showMessageDialog(null, tblMostrarCompras.getValueAt(fila, 5));
-            verCompras.lblFactura.setText(tblMostrarCompras.getValueAt(fila, 0).toString());
-            verCompras.lblCai.setText(tblMostrarCompras.getValueAt(fila, 1).toString());
-            verCompras.lblProveedor.setText(tblMostrarCompras.getValueAt(fila, 2).toString());
-            verCompras.lblContado.setText(tblMostrarCompras.getValueAt(fila, 3).toString());
-            verCompras.lblFecha.setText(tblMostrarCompras.getValueAt(fila, 4).toString());
-
+            VerCompras verCompras = new VerCompras(tblMostrarCompras.getValueAt(fila, 0).toString());
+            //JOptionPane.showMessageDialog(null, tblMostrarCompras.getValueAt(fila, 7));
+            verCompras.lblFactura.setText(tblMostrarCompras.getValueAt(fila, 1).toString());
+            verCompras.lblCai.setText(tblMostrarCompras.getValueAt(fila, 2).toString());
+            verCompras.lblProveedor.setText(tblMostrarCompras.getValueAt(fila, 3).toString());
+            verCompras.lblContado.setText(tblMostrarCompras.getValueAt(fila, 4).toString());
+            verCompras.lblFecha.setText(tblMostrarCompras.getValueAt(fila, 5).toString());
             verCompras.setVisible(true);
         
         }

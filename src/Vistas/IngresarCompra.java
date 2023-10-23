@@ -569,17 +569,45 @@ public class IngresarCompra extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     }
                     try {
-                        PreparedStatement guardarIP = conection.prepareStatement("INSERT INTO inventarioproductos(Producto, Marca, tipo_Producto, Cantidad, Precio) VALUES(?,?,?,?,?)");
-                        // Insertar los datos en la base de datos (personaliza la sentencia SQL)
-                        guardarIP.setString(1, producto);
-                        guardarIP.setString(2, Marca);
-                        guardarIP.setString(3, presentacion);
-                        guardarIP.setInt(4, cantidad);
-                        guardarIP.setDouble(5, precio);
-                        guardarIP.executeUpdate();
-                    } catch (SQLException e) {
-                        JOptionPane.showMessageDialog(null, "Error al guardar el registro: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                    }
+        // Verificar si el producto ya existe en el inventario
+        PreparedStatement verificarExistencia = conection.prepareStatement("SELECT Cantidad, Precio FROM inventarioproductos WHERE Producto = ? AND Marca = ? AND tipo_Producto = ?");
+        verificarExistencia.setString(1, producto);
+        verificarExistencia.setString(2, Marca);
+        verificarExistencia.setString(3, presentacion);
+
+        ResultSet resultSet = verificarExistencia.executeQuery();
+
+        if (resultSet.next()) {
+            int cantidadExistente = resultSet.getInt("Cantidad");
+            double precioExistente = resultSet.getDouble("Precio");
+
+            // Sumar la cantidad en la factura a la cantidad existente en el inventario
+            int nuevaCantidad = cantidadExistente + cantidad;
+
+            // Reemplazar el precio en el inventario si es mayor
+            double nuevoPrecio = Math.max(precioExistente, precio);
+
+            // Actualizar la cantidad y el precio en el inventario
+            PreparedStatement actualizarExistente = conection.prepareStatement("UPDATE inventarioproductos SET Cantidad = ?, Precio = ? WHERE Producto = ? AND Marca = ? AND tipo_Producto = ?");
+            actualizarExistente.setInt(1, nuevaCantidad);
+            actualizarExistente.setDouble(2, nuevoPrecio);
+            actualizarExistente.setString(3, producto);
+            actualizarExistente.setString(4, Marca);
+            actualizarExistente.setString(5, presentacion);
+            actualizarExistente.executeUpdate();
+        } else {
+            // El producto no existe en el inventario, inserta un nuevo registro
+            PreparedStatement insertarNuevo = conection.prepareStatement("INSERT INTO inventarioproductos(Producto, Marca, tipo_Producto, Cantidad, Precio) VALUES(?,?,?,?,?)");
+            insertarNuevo.setString(1, producto);
+            insertarNuevo.setString(2, Marca);
+            insertarNuevo.setString(3, presentacion);
+            insertarNuevo.setInt(4, cantidad);
+            insertarNuevo.setDouble(5, precio);
+            insertarNuevo.executeUpdate();
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(null, "Error al guardar el registro en el inventario: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
                 }
                 this.dispose();
                 JOptionPane.showMessageDialog(null, "Factura guardada");

@@ -14,6 +14,7 @@ import java.awt.Image;
 public class QuerysCortes { 
     private int id;
     private String nombre_cortr;
+    private String genero;
     private byte[] corte;
     private byte[] corte2;
     private byte[] corte3;
@@ -36,6 +37,14 @@ public class QuerysCortes {
         this.nombre_cortr = nombre_cortr;
     }
 
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+    
     public byte[] getCorte() {
         return corte;
     }
@@ -78,6 +87,10 @@ public class QuerysCortes {
     }
     
     public static String RegistraCortes = "INSERT INTO catalogo_cortes("
-            +"nombre_corte,"+"corte,"+"cote2,"+"corte3,"+"precio,"+"descripcion)"
-            +"VALUES(?,?,?,?,?,?)";
+            +"nombre_corte,"+"genero,"+"corte,"+"cote2,"+"corte3,"+"precio,"+"descripcion)"
+            +"VALUES(?,?,?,?,?,?,?)";
+    
+    public static String LISTARCORTES = "SELECT * FROM catalogo_cortes";
+    
+    public static String VerCortes = "SELECT nombre_corte, genero, corte, cote2, corte3, precio, descripcion FROM catalogo_cortes WHERE id = ?";
 }

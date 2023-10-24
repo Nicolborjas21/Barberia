@@ -4,23 +4,124 @@
  */
 package Vistas;
 
+import Conexion.Conexion;
+import ConsultasSQL.QuerysCortes;
+import com.mysql.cj.jdbc.Blob;
 import java.awt.Color;
-import javax.swing.JOptionPane;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+
 
 public class VerCortes extends javax.swing.JFrame {
 
-    public VerCortes() {
+     private String idCorte;
+
+    public VerCortes(String idCorte) throws IOException {
         initComponents();
         this.setLocationRelativeTo(null);
         getContentPane().setBackground(Color.white);
-    }
-    
-    public VerCortes(String id) {
-        initComponents();
-        this.setLocationRelativeTo(null);
-        getContentPane().setBackground(Color.white);
+        this.idCorte = idCorte;
+        // Aquí deberías usar el ID para cargar los datos del corte en los componentes visuales (por ejemplo, lblNombre, lblPrecio, etc.).
+        cargarDatosDelCorte();
     }
 
+    private VerCortes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    
+    private void cargarDatosDelCorte() throws IOException {
+    
+        java.sql.Connection conexion = Conexion.getConexion(); // Usar tu método para obtener la conexión.
+        
+    try {
+        // Cargar la consulta SQL desde el archivo 'ObtenerCortePorID.sql'.
+        String consultaSQL = QuerysCortes.VerCortes;
+
+        // Crear una sentencia preparada con la consulta SQL.
+        PreparedStatement ps = conexion.prepareStatement(consultaSQL);
+        ps.setString(1, idCorte); 
+
+        // Ejecutar la consulta y obtener el resultado.
+        var rs = ps.executeQuery();
+        if (rs.next()) {
+            String nombre = rs.getString("nombre_corte");
+            String genero = rs.getString("genero");
+            Blob corte1Blob = (Blob) rs.getBlob("corte");
+            Blob corte2Blob = (Blob) rs.getBlob("cote2");
+            Blob corte3Blob = (Blob) rs.getBlob("corte3");
+            
+            InputStream corte1Stream = corte1Blob.getBinaryStream();
+            InputStream corte2Stream = corte2Blob.getBinaryStream();
+            InputStream corte3Stream = corte3Blob.getBinaryStream();
+
+            BufferedImage corte1Image = ImageIO.read(corte1Stream);
+            BufferedImage corte2Image = ImageIO.read(corte2Stream);
+            BufferedImage corte3Image = ImageIO.read(corte3Stream);
+            
+            String precio = rs.getString("precio");
+            String descripcion = rs.getString("descripcion");
+
+            lblNombre.setText(nombre);
+            lblGenero.setText(genero);
+            // Tamaño fijo para las imágenes
+            int imagenAncho = 200; // Ancho deseado en píxeles
+            int imagenAlto = 200; // Alto deseado en píxeles
+
+            if (corte1Image != null) {
+                corte1Image = resizeImage(corte1Image, imagenAncho, imagenAlto);
+                LblImagen1.setIcon(new ImageIcon(corte1Image));
+                LblImagen1.setText(""); // Borra cualquier texto previo
+            } else {
+                LblImagen1.setText("<html><div style='text-align: center;'>No hay imagen<br>disponible</div></html>");
+                LblImagen1.setForeground(Color.RED);
+            }
+
+            if (corte2Image != null) {
+                corte2Image = resizeImage(corte2Image, imagenAncho, imagenAlto);
+                LblImagen2.setIcon(new ImageIcon(corte2Image));
+                LblImagen2.setText(""); // Borra cualquier texto previo
+            } else {
+                LblImagen2.setText("<html><div style='text-align: center;'>No hay imagen<br>disponible</div></html>");
+                LblImagen2.setForeground(Color.RED);
+            }
+
+            if (corte3Image != null) {
+                corte3Image = resizeImage(corte3Image, imagenAncho, imagenAlto);
+                LblImagen3.setIcon(new ImageIcon(corte3Image));
+                LblImagen3.setText(""); // Borra cualquier texto previo
+            } else {
+                LblImagen3.setText("<html><div style='text-align: center;'>No hay imagen<br>disponible</div></html>");
+                LblImagen3.setForeground(Color.RED);
+            }
+            lblPrecio.setText(precio);
+            txtDescripcion.setText(descripcion);
+           
+
+        }
+        // Cierra los recursos (ResultSet, PreparedStatement).
+        rs.close();
+        ps.close();
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        // Maneja los errores apropiadamente.
+    }
+}
+
+
+// Método para redimensionar la imagen a un tamaño específico
+private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) {
+    BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
+    Graphics2D graphics = resizedImage.createGraphics();
+    graphics.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+    graphics.dispose();
+    return resizedImage;
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -41,11 +142,12 @@ public class VerCortes extends javax.swing.JFrame {
         btnVolver = new javax.swing.JButton();
         LblImagen2 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        LblImagen4 = new javax.swing.JLabel();
         LblImagen1 = new javax.swing.JLabel();
         LblImagen3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDescripcion = new javax.swing.JTextArea();
+        jLabel5 = new javax.swing.JLabel();
+        lblGenero = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -59,7 +161,7 @@ public class VerCortes extends javax.swing.JFrame {
 
         jLabel6.setBackground(new java.awt.Color(204, 204, 204));
         jLabel6.setFont(new java.awt.Font("Arial Black", 1, 18)); // NOI18N
-        jLabel6.setText("Corte de pelo");
+        jLabel6.setText("Corte de cabello");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setText("Nombre:");
@@ -82,19 +184,13 @@ public class VerCortes extends javax.swing.JFrame {
             }
         });
 
-        LblImagen2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
         LblImagen2.setText("jLabel7");
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
         jLabel8.setText("jLabel7");
 
-        LblImagen4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
-        LblImagen4.setText("jLabel7");
-
-        LblImagen1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
         LblImagen1.setText("jLabel7");
 
-        LblImagen3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
         LblImagen3.setText("jLabel7");
 
         txtDescripcion.setEditable(false);
@@ -102,49 +198,59 @@ public class VerCortes extends javax.swing.JFrame {
         txtDescripcion.setRows(5);
         jScrollPane1.setViewportView(txtDescripcion);
 
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setText("Genero:");
+
+        lblGenero.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblGenero.setText("aaaa");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(313, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(301, 301, 301))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(311, 311, 311))))
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(108, 108, 108)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(108, 108, 108)
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblPrecio))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(LblImagen1, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(17, 17, 17)
-                                .addComponent(LblImagen1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(LblImagen2, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(LblImagen2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(LblImagen3, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(LblImagen4, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(LblImagen3, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addGap(182, 182, 182))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(311, 311, 311))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(109, 109, 109)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblGenero)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(2, 2, 2)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblPrecio))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
+                                .addComponent(jLabel1)
                                 .addGap(18, 18, 18)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(109, 109, 109)
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblNombre)))
-                .addContainerGap(153, Short.MAX_VALUE))
+                                .addComponent(lblNombre)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                     .addContainerGap(630, Short.MAX_VALUE)
@@ -154,25 +260,28 @@ public class VerCortes extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(12, 12, 12)
+                .addGap(14, 14, 14)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(10, 10, 10)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(lblNombre))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(lblGenero))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
-                .addGap(32, 32, 32)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LblImagen2, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LblImagen1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LblImagen3, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LblImagen4, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(44, 44, 44)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(LblImagen3, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
+                    .addComponent(LblImagen1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(LblImagen2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPrecio)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
@@ -181,12 +290,12 @@ public class VerCortes extends javax.swing.JFrame {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(26, 26, 26)))
                 .addComponent(btnVolver)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(64, 64, 64)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(396, Short.MAX_VALUE)))
+                    .addContainerGap(465, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -201,9 +310,9 @@ public class VerCortes extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -253,18 +362,19 @@ public class VerCortes extends javax.swing.JFrame {
     private javax.swing.JLabel LblImagen1;
     private javax.swing.JLabel LblImagen2;
     private javax.swing.JLabel LblImagen3;
-    private javax.swing.JLabel LblImagen4;
     private javax.swing.JButton btnVolver;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblNombre;
-    private javax.swing.JLabel lblPrecio;
+    public javax.swing.JLabel lblGenero;
+    public javax.swing.JLabel lblNombre;
+    public javax.swing.JLabel lblPrecio;
     public static javax.swing.JTextArea txtDescripcion;
     // End of variables declaration//GEN-END:variables
 }

@@ -7,6 +7,7 @@ package Vistas;
 import Conexion.Conexion;
 import ConsultasSQL.QuerysProductosCuidados;
 import Controlador.ProductosFactura;
+import static Vistas.IngresarCompra.tblProductosCompras;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -15,10 +16,8 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import org.jdesktop.swingx.prompt.PromptSupport;
 //import static Vistas.IngresarCompra.tblProductosCompras;
-
-
-
 
 
 /**
@@ -27,16 +26,18 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ProductoParaCompra extends javax.swing.JFrame {
     
+      
+    
     //Variables para calcular el total de la factura
     static double totalFactura, suma;
     
-
     /**
      * Creates new form ProductoParaCompra
      */
     public ProductoParaCompra() {
         initComponents();
         this.setLocationRelativeTo(null);
+        PromptSupport.setPrompt("Buscar por nombre del producto o por su marca", CuadroBuscarProducto);
         
         //Inicializando la variable para calcular el total de la factura
         totalFactura = 0;
@@ -65,13 +66,12 @@ public class ProductoParaCompra extends javax.swing.JFrame {
     
     
     public void filtrarDatosProductos(String valor){
-        String[] titulos = {"<html>Num.</html>","<html>Nombre del Producto</html>","<html>Tipo de inventario</html>",
-            "<html>Precio</html>"};
+        String[] titulos = {"<html>Num.</html>","<html>nombre</html>","<html>marca</html>","<html>categoria</html>"};
         String[] registrosP = new String[4];
         
         DefaultTableModel modelo = new DefaultTableModel(null, titulos);
-        String SQL = "select * from productos WHERE "
-                + "nombreProducto like '%"+valor+"%' or tipoInventario like '%"+valor+"%'";
+        String SQL = "select * from catalogo_productos WHERE "
+                + "nombre like '%"+valor+"%' or marca like '%"+valor+"%' or tamano like '%"+valor+"%'";
         
         
         
@@ -81,9 +81,9 @@ public class ProductoParaCompra extends javax.swing.JFrame {
             
             while(rs.next()){
                 registrosP[0]=rs.getString("id");
-                registrosP[1]=rs.getString("nombreProducto");
-                registrosP[2]=rs.getString("tipoInventario");
-                registrosP[3]=rs.getString("precio");
+                registrosP[1]=rs.getString("nombre");
+                registrosP[2]=rs.getString("marca");
+                registrosP[3]=rs.getString("tamano");
                 
                 modelo.addRow(registrosP);
                 
@@ -113,7 +113,7 @@ public class ProductoParaCompra extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtValor = new javax.swing.JTextField();
-        Refrescar = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
 
         jList1.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -124,9 +124,12 @@ public class ProductoParaCompra extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Ingresar productos a la factura");
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 3, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 3, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 153));
         jLabel1.setText("Agregar Producto a la Factura");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 30, 390, -1));
 
         cantidad.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         cantidad.addActionListener(new java.awt.event.ActionListener() {
@@ -139,9 +142,11 @@ public class ProductoParaCompra extends javax.swing.JFrame {
                 cantidadKeyTyped(evt);
             }
         });
+        getContentPane().add(cantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 437, 90, 33));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Cantidad");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 442, -1, -1));
 
         bntAgregarProducto.setBackground(new java.awt.Color(253, 253, 253));
         bntAgregarProducto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/añadir.png"))); // NOI18N
@@ -151,6 +156,7 @@ public class ProductoParaCompra extends javax.swing.JFrame {
                 bntAgregarProductoActionPerformed(evt);
             }
         });
+        getContentPane().add(bntAgregarProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 500, -1, 31));
 
         cancelar.setBackground(new java.awt.Color(253, 253, 253));
         cancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/cancelarr.png"))); // NOI18N
@@ -160,6 +166,7 @@ public class ProductoParaCompra extends javax.swing.JFrame {
                 cancelarActionPerformed(evt);
             }
         });
+        getContentPane().add(cancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 500, -1, -1));
 
         tblProductosParafactura.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -188,6 +195,8 @@ public class ProductoParaCompra extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(tblProductosParafactura);
 
+        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 150, 802, 275));
+
         CuadroBuscarProducto.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 CuadroBuscarProductoFocusGained(evt);
@@ -209,6 +218,7 @@ public class ProductoParaCompra extends javax.swing.JFrame {
                 CuadroBuscarProductoKeyTyped(evt);
             }
         });
+        getContentPane().add(CuadroBuscarProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(491, 96, 287, 30));
 
         bntAgregarProd.setBackground(new java.awt.Color(253, 253, 253));
         bntAgregarProd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/añadir.png"))); // NOI18N
@@ -218,11 +228,15 @@ public class ProductoParaCompra extends javax.swing.JFrame {
                 bntAgregarProdActionPerformed(evt);
             }
         });
+        getContentPane().add(bntAgregarProd, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, -1, 29));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/lupa.jpg"))); // NOI18N
+        jLabel2.setText("Buscar");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(392, 96, 70, 30));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel4.setText("Precio");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(428, 442, -1, -1));
 
         txtValor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtValor.addActionListener(new java.awt.event.ActionListener() {
@@ -235,86 +249,10 @@ public class ProductoParaCompra extends javax.swing.JFrame {
                 txtValorKeyTyped(evt);
             }
         });
+        getContentPane().add(txtValor, new org.netbeans.lib.awtextra.AbsoluteConstraints(477, 437, 120, 33));
 
-        Refrescar.setText("Refrescar");
-        Refrescar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                RefrescarActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(272, 272, 272)
-                .addComponent(bntAgregarProducto)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cancelar))
-                .addContainerGap(217, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(123, 123, 123)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(36, 36, 36)
-                        .addComponent(bntAgregarProd)
-                        .addGap(80, 80, 80)
-                        .addComponent(Refrescar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(CuadroBuscarProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(209, 209, 209))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 802, javax.swing.GroupLayout.PREFERRED_SIZE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(59, 59, 59)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(bntAgregarProd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(Refrescar))
-                        .addGap(24, 24, 24))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(CuadroBuscarProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addGap(35, 35, 35)))
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(42, 42, 42)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(bntAgregarProducto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(19, 19, 19))
-        );
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 0, 210, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -331,34 +269,28 @@ public class ProductoParaCompra extends javax.swing.JFrame {
 
         if (fila < 0) {
             JOptionPane.showMessageDialog(null, "No se seleccionó ningún producto",
-                    "Error al agregar producto", JOptionPane.WARNING_MESSAGE);
+                    "Error de validacion", JOptionPane.WARNING_MESSAGE);
             return; // Salir del método si no se seleccionó ningún producto
         }
 
         if (cantidad.getText().isEmpty()) {
             JOptionPane.showMessageDialog(null, "No se ingresó una cantidad",
-                    "Error al agregar producto", JOptionPane.WARNING_MESSAGE);
+                    "Error de validacion", JOptionPane.WARNING_MESSAGE);
             return; // Salir del método si no se ingresó una cantidad
         }
         
         if (cantidad.getText().startsWith("0")) {
             JOptionPane.showMessageDialog(null, "Ingrese cantidades mayores a cero(0)",
-                    "Error al agregar producto", JOptionPane.WARNING_MESSAGE);
+                    "Error de validacion", JOptionPane.WARNING_MESSAGE);
             return; // Salir del método si no se ingresó una cantidad
         }
          String valor = txtValor.getText().trim();
        if (valor.isEmpty()) {
-              JOptionPane.showMessageDialog(null, " El precio esta vacío.", "Error al guardar",
-                    JOptionPane.WARNING_MESSAGE);
+             JOptionPane.showMessageDialog(null, "El precio no puede estar vacío",
+                    "Error de validacion", JOptionPane.WARNING_MESSAGE);
+                    
             return; // Salir del método si el campo está vacío
         }
-       
-      /*  try {
-            double precio = Double.parseDouble(valor);
-            if (precio <= 0) {
-                JOptionPane.showMessageDialog(this, "El precio debe ser un número mayor que cero");
-                return; // Salir del método si el precio no es válido
-            }*/
 
         DefaultTableModel modelo = (DefaultTableModel) tblProductosParafactura.getModel();
         nombreProd = tblProductosParafactura.getValueAt(fila, 1).toString();
@@ -373,42 +305,44 @@ public class ProductoParaCompra extends javax.swing.JFrame {
         totalP = String.valueOf(tot);
 
         //Enviar los campos seleccionados de la tabla de productos a la tabla de factura de compras
-      //  modelo = (DefaultTableModel) tblProductosCompras.getModel();
+        modelo = (DefaultTableModel) tblProductosCompras.getModel();
         
         // Buscar el producto en la tabla tblProductosCompras
         int rowCount = modelo.getRowCount();
         boolean productoEncontrado = false;
 
-        for (int i = 0; i < rowCount; i++) {
-            String productoExistente = modelo.getValueAt(i, 0).toString();
+             for (int i = 0; i < modelo.getRowCount(); i++) {
+             String productoExistente = modelo.getValueAt(i, 0).toString();
+    
             if (productoExistente.equals(nombreProd)) {
-                // El producto ya existe en la tabla, actualizar la cantidad y el total
-                String cantidadExistente = modelo.getValueAt(i, 1).toString();
-                int nuevaCantidad = Integer.parseInt(cantidadExistente) + Integer.parseInt(cantid);
-                modelo.setValueAt(String.valueOf(nuevaCantidad), i, 1);
-
-                String totalExistente = modelo.getValueAt(i, 3).toString();
+               // El producto ya existe en la tabla, actualizar la cantidad y el precio
+              String cantidadExistente = modelo.getValueAt(i, 3).toString();
+             int nuevaCantidad = Integer.parseInt(cantidadExistente) + Integer.parseInt(cantid);
+             modelo.setValueAt(String.valueOf(nuevaCantidad), i, 3);
+        
+                String precioExistente = modelo.getValueAt(i, 4).toString();
                 double precioUnitario = Double.parseDouble(precio);
-                double nuevoTotal = precioUnitario * nuevaCantidad;
-                modelo.setValueAt(String.valueOf(nuevoTotal), i, 3);
-
+             double nuevoPrecio = Math.max(precioUnitario, Double.parseDouble(precioExistente));
+             modelo.setValueAt(String.valueOf(nuevoPrecio), i, 4);
+        
+                double nuevoTotal = nuevoPrecio * nuevaCantidad;
+             modelo.setValueAt(String.valueOf(nuevoTotal), i, 5);
+        
                 productoEncontrado = true;
-                break;
-            }
-        }
+             break;
+    }
+}
 
         if (!productoEncontrado) {
-            // El producto no existe en la tabla, agregarlo como una nueva fila
-            tot = Double.parseDouble(precio) * Integer.parseInt(cantid);
-            totalP = String.valueOf(tot);
+      // El producto no existe en la tabla, agregarlo como una nueva fila
+        tot = Double.parseDouble(precio) * Integer.parseInt(cantid);
+        totalP = String.valueOf(tot);
 
-            String filaElemento[] = {nombreProd, marca, presen, cantid, precio, totalP};
-            modelo.addRow(filaElemento);
-        }
-        
+        String filaElemento[] = {nombreProd, marca, presen, cantid, precio, totalP};
+        modelo.addRow(filaElemento);
+}
 
-        
-
+       
         //calculo para que se sumen los totales de la factura a uno solo y se envíe a la tabla de facturas
         calcula = Double.parseDouble(precio) * Integer.parseInt(cantidad.getText());
         totalFactura += calcula; // Sumar al total existente
@@ -417,7 +351,9 @@ public class ProductoParaCompra extends javax.swing.JFrame {
 
         // Limpiar el campo de cantidad después de agregar el producto
         cantidad.setText("");
+        txtValor.setText("");
         JOptionPane.showMessageDialog(null, "Se agrego el producto!");
+        
     } catch (Exception e) {
         e.printStackTrace();
     }
@@ -544,23 +480,13 @@ public class ProductoParaCompra extends javax.swing.JFrame {
     }
 
     // Comprobar si la longitud del texto supera el límite de 10 caracteres
-    if (currentText.length() >= 10) {
+    if (currentText.length() >= 4) {
         evt.consume(); // No permitir seguir escribiendo en el campo
     }
       
          
 
     }//GEN-LAST:event_txtValorKeyTyped
-
-    private void RefrescarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefrescarActionPerformed
-
-          DefaultTableModel model = (DefaultTableModel) tblProductosParafactura.getModel();
-    while (model.getRowCount() > 0) {
-        model.removeRow(0);
-    }
-                
-
-    }//GEN-LAST:event_RefrescarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -600,7 +526,6 @@ public class ProductoParaCompra extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField CuadroBuscarProducto;
-    private javax.swing.JButton Refrescar;
     public static javax.swing.JButton bntAgregarProd;
     public static javax.swing.JButton bntAgregarProducto;
     private javax.swing.JButton cancelar;
@@ -609,6 +534,7 @@ public class ProductoParaCompra extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JList<String> jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;

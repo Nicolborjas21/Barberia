@@ -8,10 +8,9 @@ import javax.swing.table.DefaultTableModel;
 import Conexion.Conexion;
 
 import java.awt.Color;
-import java.sql.Statement;
-import java.sql.ResultSet;
-import javax.swing.JOptionPane;
+
 import javax.swing.JTextField;
+import org.jdesktop.swingx.prompt.PromptSupport;
 
 
 public class MostrarInventario extends javax.swing.JPanel {
@@ -20,8 +19,8 @@ public class MostrarInventario extends javax.swing.JPanel {
     public MostrarInventario() {
         initComponents();
         tblMostrarInventario.getTableHeader().setReorderingAllowed(false);
-        Controlador.InventarioProductos.MostrarProductos("", paginaActual, totalPages);
-        //PromptSupport.setPrompt("Buscar por el articulo, departamento y fecha", txtBusqueda);
+        Controlador.InventarioProductos.MostrarProductos("", paginaActual);
+        PromptSupport.setPrompt("Buscar por nombre del producto o por su marca", txtBusqueda);
       
     }
     
@@ -43,11 +42,14 @@ public class MostrarInventario extends javax.swing.JPanel {
         seguimiento = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblMostrarInventario = new javax.swing.JTable();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setBackground(new java.awt.Color(0, 0, 0));
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 153));
         jLabel1.setText("Listado de productos en inventario");
 
         txtBusqueda.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -70,7 +72,7 @@ public class MostrarInventario extends javax.swing.JPanel {
         });
 
         btnAtras.setBackground(new java.awt.Color(255, 255, 248));
-        btnAtras.setText("Atras");
+        btnAtras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/boton_atras.png"))); // NOI18N
         btnAtras.setToolTipText("");
         btnAtras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -79,7 +81,7 @@ public class MostrarInventario extends javax.swing.JPanel {
         });
 
         btnAdelante.setBackground(new java.awt.Color(255, 255, 248));
-        btnAdelante.setText("Adelante");
+        btnAdelante.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/boton_delante.png"))); // NOI18N
         btnAdelante.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAdelanteActionPerformed(evt);
@@ -96,7 +98,7 @@ public class MostrarInventario extends javax.swing.JPanel {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "Num", "Producto", "Tipo de producto", "Cantidad", "Precio", "Id"
+                "Num", "Producto", "Marca", "Cantidad", "Precio", "Id"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -113,45 +115,65 @@ public class MostrarInventario extends javax.swing.JPanel {
             tblMostrarInventario.getColumnModel().getColumn(5).setMaxWidth(0);
         }
 
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/lupa.jpg"))); // NOI18N
+        jLabel4.setText("Buscar ");
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 817, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(74, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnAtras)
+                                .addGap(162, 162, 162)
+                                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 543, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(33, 33, 33)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnAdelante)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(seguimiento))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 817, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 269, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(btnAtras)
+                .addGap(18, 18, 18)
+                .addComponent(btnAdelante)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(seguimiento)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnAdelante)
-                        .addComponent(seguimiento))
-                    .addComponent(btnAtras))
-                .addGap(37, 37, 37))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(28, 28, 28))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAdelante)
+                    .addComponent(btnAtras)
+                    .addComponent(seguimiento))
+                .addContainerGap(93, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -161,8 +183,8 @@ public class MostrarInventario extends javax.swing.JPanel {
     }//GEN-LAST:event_txtBusquedaActionPerformed
 
     private void txtBusquedaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBusquedaKeyReleased
-        // TODO add your handling code here:
-        //codigo para el cuadro de busqueda en el JTextfield
+       String textoBusqueda = txtBusqueda.getText();
+        Controlador.InventarioProductos.MostrarProductos(textoBusqueda, paginaActual);
 
         
     }//GEN-LAST:event_txtBusquedaKeyReleased
@@ -171,7 +193,7 @@ public class MostrarInventario extends javax.swing.JPanel {
         // TODO add your handling code here:
         //placeholder para notificar como realizar la busqueda
         JTextField textField = (JTextField) evt.getSource();
-        String placeholder = "Busqueda por todos los campos excepto total";
+        String placeholder = "Buscar por nombre del producto o por su marca";
 
         if (textField.getText().equals(placeholder)) {
             textField.setText("");
@@ -183,7 +205,7 @@ public class MostrarInventario extends javax.swing.JPanel {
         // TODO add your handling code here:
         //placeholder para notificar como realizar la busqueda
           JTextField textField = (JTextField) evt.getSource();
-          String placeholder = "Busqueda por todos los campos excepto total";
+          String placeholder = "Buscar por nombre del producto o por su marca";
 
           if (textField.getText().isEmpty()) {
             textField.setText(placeholder);
@@ -194,14 +216,15 @@ public class MostrarInventario extends javax.swing.JPanel {
     private void btnAtrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtrasActionPerformed
         if (paginaActual > 1) {
             paginaActual--;
-            Controlador.ComprasProducto.MostrarCompras(txtBusqueda.getText(), paginaActual, totalPages);
+           // Controlador.InventarioProductos.MostrarProductos(txtBusqueda.getText(), paginaActual, totalPages);
+            Controlador.InventarioProductos.MostrarProductos(txtBusqueda.getText(), paginaActual);
         }
     }//GEN-LAST:event_btnAtrasActionPerformed
 
     private void btnAdelanteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdelanteActionPerformed
         if (paginaActual < totalPages) {
             paginaActual++;
-            Controlador.ComprasProducto.MostrarCompras(txtBusqueda.getText(), paginaActual, totalPages);
+            Controlador.InventarioProductos.MostrarProductos(txtBusqueda.getText(), paginaActual);
         }
     }//GEN-LAST:event_btnAdelanteActionPerformed
 
@@ -210,6 +233,8 @@ public class MostrarInventario extends javax.swing.JPanel {
     public static javax.swing.JButton btnAdelante;
     public static javax.swing.JButton btnAtras;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane2;
     public static javax.swing.JLabel seguimiento;
     public static javax.swing.JTable tblMostrarInventario;

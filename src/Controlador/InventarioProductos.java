@@ -14,97 +14,78 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.SwingConstants;
 
-/**
- *
- * @author Josue
- */
 public class InventarioProductos {
-    
-    
-    // Establecer la conexión a la base de datos
     private static Conexion con = new Conexion();
     private static Connection conexion = con.getConexion();
     private static PreparedStatement ps = null;
-    private static final int filasxPagina = 20;   
-    public static int NumeroPages(){
-                String sql = ""; 
-                sql = "SELECT count(*) from inventarioproductos";
+    public static final int filasxPagina = 20;
 
-            try{
-                 Statement st = conexion.createStatement();
-
-                ps = conexion.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    int totalPages = (int) Math.ceil((double) rs.getInt(1) / filasxPagina);
-                    return totalPages;
-                } else {
-                    return 0;
-                }
-            }catch (SQLException ex){
-                Logger.getLogger(MostrarInventario.class.getName()).log(Level.SEVERE, null, ex);
+    public static int NumeroPages() {
+        String sql = "SELECT count(*) FROM inventarioproductos";
+        try {
+            Statement st = conexion.createStatement();
+            ps = conexion.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int totalPages = (int) Math.ceil((double) rs.getInt(1) / filasxPagina);
+                return totalPages;
+            } else {
                 return 0;
             }
-
+        } catch (SQLException ex) {
+            Logger.getLogger(MostrarInventario.class.getName()).log(Level.SEVERE, null, ex);
+            return 0;
         }
-        
-    public static void MostrarProductos(String buscar, int paginaActual, int totalPages){
-        DefaultTableModel model = (DefaultTableModel)MostrarInventario.tblMostrarInventario.getModel();
-        while (model.getRowCount() > 0 ){
-                model.removeRow(0);
-               
     }
-    
-            
-            String sql = "SELECT * FROM inventarioproductos WHERE producto LIKE ('%" + buscar + "%') or tipo_producto LIKE ('%" + buscar + "%') ";
-          
-           
-            if (buscar == null){
-                 sql = QuerysInventarioProductos.LISTARINVENTARIO;
-            } else {
 
-               sql = "SELECT * FROM inventarioproductos WHERE producto LIKE ('%" + buscar + "%') ";
-           
-            }            
-        
-        String datos[] = new String[5];
-        
-        try{
-        
-            Statement st = conexion.createStatement();
-            ResultSet rs = st.executeQuery(sql);
-            
-           
+    public static void MostrarProductos(String buscar, int paginaActual) {
+        DefaultTableModel model = (DefaultTableModel) MostrarInventario.tblMostrarInventario.getModel();
+        while (model.getRowCount() > 0) {
+            model.removeRow(0);
+        }
+
+        // Calcular el rango de filas a recuperar para la página actual
+        int inicio = (paginaActual - 1) * filasxPagina;
+        int fin = inicio + filasxPagina;
+
+        String sql = "SELECT * FROM inventarioproductos WHERE producto LIKE ? OR marca LIKE ? LIMIT ?, ?";
+
+        try {
+            PreparedStatement ps = conexion.prepareStatement(sql);
+            ps.setString(1, "%" + buscar + "%");
+            ps.setString(2, "%" + buscar + "%");
+            ps.setInt(3, inicio);
+            ps.setInt(4, filasxPagina);
+
+            ResultSet rs = ps.executeQuery();
+
             int count = 1;
-            while(rs.next()){
-                datos[0] = count+"";
+            while (rs.next()) {
+                String datos[] = new String[6];
+                datos[0] = count + "";
                 datos[1] = rs.getString("producto");
-                datos[2] = rs.getString("cantidad");
-                datos[3] = rs.getString("precio");
-                datos[4] = rs.getString( "id");
+                datos[2] = rs.getString("marca");
+                datos[3] = rs.getString("cantidad");
+                datos[4] = rs.getString("precio");
+                datos[5] = rs.getString("id");
                 model.addRow(datos);
-                
-                int totalRows = count - 1; // Restamos el encabezado de la tabla
-                totalPages = NumeroPages();
-                MostrarInventario.seguimiento.setText("Página " + paginaActual + " de " + totalPages);
-                DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
-                tcr.setHorizontalAlignment(SwingConstants.RIGHT);
-                MostrarInventario.tblMostrarInventario.setModel(model);
                 count++;
-              
-                
             }
-           
-        }catch (SQLException ex){
-           Logger.getLogger(InventarioProductos.class.getName()).log(Level.SEVERE,null, ex);
-            
+
+            // Calcula el número total de páginas
+            int totalPages = NumeroPages();
+
+            MostrarInventario.seguimiento.setText("Página " + paginaActual + " de " + totalPages);
+            DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
+            tcr.setHorizontalAlignment(SwingConstants.RIGHT);
+            MostrarInventario.tblMostrarInventario.setModel(model);
+        } catch (SQLException ex) {
+            Logger.getLogger(InventarioProductos.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
     }
-    
-    }
+}
 

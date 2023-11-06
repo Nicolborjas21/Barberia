@@ -2,10 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Conexion;
+package Modelos;
 
 import java.util.ArrayList;
 import Clases.Proveedor;
+import Conexion.Conexion;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -32,7 +33,7 @@ public class ModeloProveedores {
             while (rs.next()) {                
                 Proveedor proveedor = new Proveedor(0,"Nose");
                 proveedor.setId(rs.getInt("id"));
-                proveedor.setNombre(rs.getString("nombre"));
+                proveedor.setEmpresa(rs.getString("empresa"));
                 listaProveedor.add(proveedor);
                 
             }

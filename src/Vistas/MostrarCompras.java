@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableModel;
 import Conexion.Conexion;
 
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 import javax.swing.JTextField;
 import org.jdesktop.swingx.prompt.PromptSupport;
@@ -43,7 +44,6 @@ public class MostrarCompras extends javax.swing.JPanel {
         jScrollPane2 = new javax.swing.JScrollPane();
         tblMostrarCompras = new javax.swing.JTable();
         btnNuevo = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -104,6 +104,11 @@ public class MostrarCompras extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        tblMostrarCompras.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblMostrarComprasMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tblMostrarCompras);
         if (tblMostrarCompras.getColumnModel().getColumnCount() > 0) {
             tblMostrarCompras.getColumnModel().getColumn(0).setMinWidth(50);
@@ -120,14 +125,6 @@ public class MostrarCompras extends javax.swing.JPanel {
         btnNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNuevoActionPerformed(evt);
-            }
-        });
-
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/lupa.jpg"))); // NOI18N
-        jButton1.setText("Ver");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
             }
         });
 
@@ -155,8 +152,7 @@ public class MostrarCompras extends javax.swing.JPanel {
                                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(338, 338, 338)
-                                .addComponent(jButton1))
+                                .addGap(410, 410, 410))
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 817, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(btnNuevo)
@@ -169,11 +165,10 @@ public class MostrarCompras extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -235,33 +230,44 @@ public class MostrarCompras extends javax.swing.JPanel {
             Controlador.ComprasProducto.MostrarCompras(txtBusqueda.getText(), paginaActual, totalPages);
         }
     }//GEN-LAST:event_btnAdelanteActionPerformed
-
+    
+    
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        int numeroDeFilas = tblMostrarCompras.getRowCount();
-        IngresarCompra compras = new IngresarCompra(numeroDeFilas);
+//        int filaCount = tblMostrarCompras.getRowCount();
+//        int numeroDeFilas = 1;
+//        if (filaCount > 0) {
+//            String ultimoNumero = tblMostrarCompras.getValueAt(filaCount - 1, 0).toString();
+//            numeroDeFilas = Integer.parseInt(ultimoNumero) + 1;
+//        }
+
+//        IngresarCompra compras = new IngresarCompra(numeroDeFilas);
+        IngresarCompra compras = new IngresarCompra();
         compras.setVisible(true);
         compras.setLocationRelativeTo(null);
+
     }//GEN-LAST:event_btnNuevoActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        int fila = tblMostrarCompras.getSelectedRow(); 
-        VerCompras verCompras = new VerCompras(tblMostrarCompras.getValueAt(fila, 5).toString());
-        //JOptionPane.showMessageDialog(null, tblMostrarCompras.getValueAt(fila, 5));
-        verCompras.lblFactura.setText(tblMostrarCompras.getValueAt(fila, 0).toString());
-        verCompras.lblCai.setText(tblMostrarCompras.getValueAt(fila, 1).toString());
-        verCompras.lblProveedor.setText(tblMostrarCompras.getValueAt(fila, 2).toString());
-        verCompras.lblContado.setText(tblMostrarCompras.getValueAt(fila, 3).toString());
-        verCompras.lblFecha.setText(tblMostrarCompras.getValueAt(fila, 4).toString());
+    private void tblMostrarComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblMostrarComprasMouseClicked
         
-        verCompras.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+        if(evt.getClickCount() == 2){
+            int fila = tblMostrarCompras.getSelectedRow(); 
+            VerCompras verCompras = new VerCompras(tblMostrarCompras.getValueAt(fila, 0).toString());
+            //JOptionPane.showMessageDialog(null, tblMostrarCompras.getValueAt(fila, 7));
+            verCompras.lblFactura.setText(tblMostrarCompras.getValueAt(fila, 1).toString());
+            verCompras.lblCai.setText(tblMostrarCompras.getValueAt(fila, 2).toString());
+            verCompras.lblProveedor.setText(tblMostrarCompras.getValueAt(fila, 3).toString());
+            verCompras.lblContado.setText(tblMostrarCompras.getValueAt(fila, 4).toString());
+            verCompras.lblFecha.setText(tblMostrarCompras.getValueAt(fila, 5).toString());
+            verCompras.setVisible(true);
+        
+        }
+    }//GEN-LAST:event_tblMostrarComprasMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JButton btnAdelante;
     public static javax.swing.JButton btnAtras;
     public static javax.swing.JButton btnNuevo;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane2;

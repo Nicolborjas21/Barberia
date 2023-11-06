@@ -36,7 +36,7 @@ public class ProductosFactura {
         
          String sql = "";
             if(buscar.equals("")){
-                sql = QuerysProductosCuidados.LISTARPRODUCTOS;
+                sql = QuerysProductosCuidados.ListarProductos;
                 
             }
 

@@ -5,20 +5,25 @@
 package Vistas;
 
 import Conexion.Conexion;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import ConsultasSQL.QuerysManicura;
+import java.sql.Connection;
 import Controlador.Manicura;
+import com.mysql.cj.jdbc.Blob;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.sql.PreparedStatement;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -31,18 +36,104 @@ public class EditarManicura extends javax.swing.JFrame {
     private FileInputStream fis;
     private int longitudBytes;
     
-    
+    private String idTratamiento;
+    private static Conexion con = new Conexion();
+    private static Connection conexion = con.getConexion();
+    public static BufferedImage Foto1Image;
+    public static BufferedImage Foto2Image;
 
     /**
      * Creates new form CrearCliente
      */
-    public EditarManicura() {
-        initComponents();
-        txtId.setVisible(false);
+    public EditarManicura(String idTratamiento) throws IOException{
+         initComponents();
         this.setLocationRelativeTo(null);
-        
-    
+        getContentPane().setBackground(Color.white);
+        this.idTratamiento = idTratamiento;
+        // Aquí deberías usar el ID para cargar los datos del corte en los componentes visuales (por ejemplo, lblNombre, lblPrecio, etc.).
+        cargarDatosDeManicura();
     }
+    
+    private EditarManicura(){
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+    }
+    
+    private void cargarDatosDeManicura(){
+        try {
+            
+             // Cargar la consulta SQL desde el archivo 'QuerysCortes'.
+            String consultaSQL = QuerysManicura.VerImagen;
+        
+            // Crear una sentencia preparada con la consulta SQL.
+            PreparedStatement ps = conexion.prepareStatement(consultaSQL);
+            ps.setString(1, idTratamiento); 
+        
+            // Ejecutar la consulta y obtener el resultado.
+            var rs = ps.executeQuery();
+        
+            if(rs.next()){
+                Blob Foto1Blob = (Blob) rs.getBlob("Foto1");
+                Blob Foto2Blob = (Blob) rs.getBlob("Foto2");
+            
+                InputStream foto1Stream = Foto1Blob.getBinaryStream();
+                InputStream foto2Stream = Foto2Blob.getBinaryStream();
+            
+                Foto1Image = ImageIO.read(foto1Stream);
+                Foto2Image = ImageIO.read(foto2Stream);
+            
+           
+                // Tamaño fijo para las imágenes
+                int imagenAncho = 200; // Ancho deseado en píxeles
+                int imagenAlto = 200; // Alto deseado en píxeles
+            
+                if (Foto1Image != null) {
+                    Foto1Image = resizeImage(Foto1Image, imagenAncho, imagenAlto);
+                    Label_Foto1.setIcon(new ImageIcon(Foto1Image));
+                    Label_Foto1.setText(""); // Borra cualquier texto previo
+                } else {
+                    Label_Foto1.setText("<html><div style='text-align: center;'>No hay imagen<br>disponible</div></html>");
+                    Label_Foto1.setForeground(Color.RED);
+                }
+                if (Foto2Image != null) {
+                    Foto2Image = resizeImage(Foto2Image, imagenAncho, imagenAlto);
+                    Label_Foto2.setIcon(new ImageIcon(Foto2Image));
+                    Label_Foto2.setText(""); // Borra cualquier texto previo
+                } else {
+                    Label_Foto2.setText("<html><div style='text-align: center;'>No hay imagen<br>disponible</div></html>");
+                    Label_Foto2.setForeground(Color.RED);
+                }
+            }
+            // Cierra los recursos (ResultSet, PreparedStatement).
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+    public BufferedImage getFoto1Image() {
+        return Foto1Image;
+    }
+    
+    public BufferedImage getFoto2Image(){
+        return Foto2Image;
+
+    }
+    
+    // Método para redimensionar la imagen a un tamaño específico
+    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight){
+        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = resizedImage.createGraphics();
+        graphics.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
+        graphics.dispose();
+        return resizedImage;
+    }
+    
+    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -80,7 +171,7 @@ public class EditarManicura extends javax.swing.JFrame {
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Dubai", 1, 24)); // NOI18N
-        jLabel1.setText("Agregar manicura o pedicura");
+        jLabel1.setText("Editar manicura o pedicura");
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
@@ -298,12 +389,13 @@ public class EditarManicura extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
             }
         }
-        querys.setId(idtxt);
         
         querys.setEsmaltado(esmalte);
         querys.setDescripcion(direccion);
+        querys.setId(idtxt);
         
-        if (Manicura.Guardar(querys)) {
+        
+        if (Manicura.Editar(querys)) {
             JOptionPane.showMessageDialog(null, "Nueva manicura o pedicura ingresada exitosamente");
             dispose();
         } else {

@@ -314,7 +314,7 @@ public class IngresarManicura extends javax.swing.JFrame {
     
     // Verificar si el archivo de imagen existe
    if (!archivoImagen.exists()) {
-        JOptionPane.showMessageDialog(null, "Debe selecionar una imágen de perfil izquierdo", "Error de validación", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Debe selecionar una imágen", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return null; // Retorna null si el archivo no existe
     }
 
@@ -340,7 +340,7 @@ public class IngresarManicura extends javax.swing.JFrame {
     
     // Verificar si el archivo de imagen existe
    if (!archivoImagen.exists()) {
-        JOptionPane.showMessageDialog(null, "Debe selecionar la imágen de frente", "Error de validación", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Debe selecionar la imágen", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return null; // Retorna null si el archivo no existe
     }
 
@@ -428,30 +428,26 @@ public class IngresarManicura extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPrecioKeyTyped
 
     private void txtDireccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDireccionKeyTyped
-        
         txtDireccion.setText(txtDireccion.getText().replaceAll("( )+", " "));
-        if (txtDireccion.getText().length() == 0 && evt.getKeyChar() == ' ') {
-                    evt.consume();
-                }      
-        
-        
-         char c = evt.getKeyChar();
-         if(Character.isDigit(c)){
+    if (txtDireccion.getText().length() == 0 && evt.getKeyChar() == ' ') {
+        evt.consume();
+    }
+
+    char c = evt.getKeyChar();
+    if (!Character.isDigit(c)) {
+        // Si el carácter no es un dígito, verifica otras condiciones
+        int tam = txtDireccion.getText().length();
+        if (tam >= 180) {
+            evt.consume();
+        } else if ((int) evt.getKeyChar() > 32 && (int) evt.getKeyChar() <= 47
+                || (int) evt.getKeyChar() >= 58 && (int) evt.getKeyChar() <= 64
+                || (int) evt.getKeyChar() >= 91 && (int) evt.getKeyChar() <= 96
+                || (int) evt.getKeyChar() >= 123 && (int) evt.getKeyChar() <= 159
+                || (int) evt.getKeyChar() >= 166 && (int) evt.getKeyChar() <= 255) {
             getToolkit().beep();
             evt.consume();
-         }
-            int tam = txtDireccion.getText().length();
-        if(tam>=180){
-            evt.consume();
-        }  else if((int)evt.getKeyChar()>32 && (int)evt.getKeyChar()<=47
-                ||(int)evt.getKeyChar()>=58 && (int)evt.getKeyChar()<=64
-                ||(int)evt.getKeyChar()>=91 && (int)evt.getKeyChar()<=96
-                ||(int)evt.getKeyChar()>=123 && (int)evt.getKeyChar()<=159
-                ||(int)evt.getKeyChar()>=166 && (int)evt.getKeyChar()<=255){
-             getToolkit().beep();
-            evt.consume();
         }
-           
+    }
     }//GEN-LAST:event_txtDireccionKeyTyped
 
     private void Label_Foto2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Label_Foto2MouseClicked

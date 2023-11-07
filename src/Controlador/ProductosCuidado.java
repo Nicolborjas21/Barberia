@@ -4,11 +4,14 @@
  */
 package Controlador;
 
+
 import Conexion.Conexion;
 import ConsultasSQL.QuerysProductosCuidados;
 import Vistas.MostrarProductosCuidado;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,15 +26,29 @@ import javax.swing.table.DefaultTableModel;
  * @author Admins
  */
 public class ProductosCuidado {
-    
     private static Conexion con = new Conexion();
     private static Connection conexion = con.getConexion();
     private static PreparedStatement ps = null;
     
     private static final int filasxPagina = 20;   
-        public static int NumeroPages(){
-                String sql = ""; 
-                sql = "SELECT count(*) from catalogo_productos";
+    
+        public static int NumeroPages(String buscar, int paginaActual,String categoria){
+                
+            String textoCategoria = "";
+            if(categoria.equals("Todas")){
+                textoCategoria = "";
+            }else if(categoria.equals("Cuidado corporal")){
+                textoCategoria = " categoria = 'Cuidado corporal' and ";
+                
+            }else if(categoria.equals("Cuidado de cabello")){
+                 textoCategoria = " categoria = 'Cuidado de cabello' and ";
+                 
+            }else if(categoria.equals("Cuidado facial")){
+                 textoCategoria = " categoria = 'Cuidado facial' and ";
+            }
+            String sql = ""; 
+                sql = "SELECT count(*) from catalogo_productos WHERE "+textoCategoria+" (nombre like concat('%','"+buscar+"','%') or "
+                        + "marca like '%"+buscar+"%')";
 
             try{
                  Statement st = conexion.createStatement();
@@ -51,32 +68,49 @@ public class ProductosCuidado {
 
         }
         
-         public static void MostrarProductosCuidado(String buscar, int paginaActual, int totalPages){
+         public static void MostrarProductosCuidado(String buscar, int paginaActual, int totalPages, String categoria){
         DefaultTableModel model = (DefaultTableModel)MostrarProductosCuidado.tblMostrarProductos.getModel();
-           while(model.getRowCount() > 0 ){
+           String textoCategoria = "";
+            if(categoria.equals("Todas")){
+                textoCategoria = "";
+            }else if(categoria.equals("Cuidado corporal")){
+                textoCategoria = " categoria = 'Cuidado corporal' and ";
+                
+            }else if(categoria.equals("Cuidado de cabello")){
+                 textoCategoria = " categoria = 'Cuidado de cabello' and ";
+                 
+            }else if(categoria.equals("Cuidado facial")){
+                 textoCategoria = " categoria = 'Cuidado facial' and ";
+            }     
+        
+        while(model.getRowCount() > 0 ){
                
-            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(4).setMaxWidth(0);
-            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(4).setMinWidth(0);
-            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(4).setMaxWidth(0);
-            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(4).setMinWidth(0);
-
-//            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(6).setMaxWidth(0);
-//            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(6).setMinWidth(0);
-//            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(0);
-//            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(6).setMinWidth(0);
+            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(5).setMaxWidth(0);
+            MostrarProductosCuidado.tblMostrarProductos.getColumnModel().getColumn(5).setMinWidth(0);
+            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(5).setMaxWidth(0);
+            MostrarProductosCuidado.tblMostrarProductos.getTableHeader().getColumnModel().getColumn(5).setMinWidth(0);
 
             model.removeRow(0);
         }
-      
            String sql = "";
+           
             if (!buscar.isEmpty()) {
-            sql = "SELECT id, nombre, marca, tamano, categoria, descripcion FROM catalogo_productos WHERE nombre LIKE '%" + buscar + "%' OR marca LIKE '%" + buscar + "%' limit " + filasxPagina + " offset " + (paginaActual - 1) * filasxPagina;
+                sql = "select * from catalogo_productos  WHERE "+textoCategoria+" (nombre like concat('%','"+buscar+"','%') or "
+                + "marca like '%"+buscar+"%') limit " + filasxPagina + " offset " + (paginaActual - 1) * filasxPagina;
+            
+                MostrarProductosCuidado.siguiente.setVisible(true);
+                MostrarProductosCuidado.Previo.setVisible(true);
+                MostrarProductosCuidado.seguimiento.setVisible(true);
             } else {
-            sql = "SELECT id, nombre, marca, tamano, categoria, descripcion FROM catalogo_productos limit " + filasxPagina + " offset " + (paginaActual - 1) * filasxPagina;
+                sql = "select * from catalogo_productos WHERE "+textoCategoria+" (nombre like concat('%','"+buscar+"','%') or "
+                + "marca like '%"+buscar+"%')";
+            
+                MostrarProductosCuidado.siguiente.setVisible(true);
+                MostrarProductosCuidado.Previo.setVisible(true);
+                MostrarProductosCuidado.seguimiento.setVisible(true);
+            
             }
 
-
-        
         String datos[] = new String[7];
         
         try{
@@ -84,17 +118,28 @@ public class ProductosCuidado {
             Statement st = conexion.createStatement();
             ResultSet rs = st.executeQuery(sql);
             
-            //int count = 1;
+            int count = 0;
+            if(paginaActual ==1) {
+                count =1;
+            }else{
+                for(int i =1;i < paginaActual ; i++){
+                    count +=20;
+                }
+                count +=1;
+            }
+           
             while(rs.next()){
-                //datos[0] = count+"";
-                datos[0] = rs.getString("nombre");
-                datos[1] = rs.getString("marca");
-                datos[2] = rs.getString("tamano");
-                datos[3] = rs.getString("categoria");
-                datos[4] = rs.getString("descripcion");
-                datos[5] = rs.getString("id");
+                datos[0] = count+"";
+                datos[1] = rs.getString("nombre");
+                datos[2] = rs.getString("marca");
+                datos[3] = rs.getString("tamano");
+                datos[4] = rs.getString("categoria");
+                datos[5] = rs.getString("descripcion");
+                datos[6] = rs.getString("id");
+                
                 model.addRow(datos);
-                totalPages = NumeroPages();
+                count++;
+                totalPages = NumeroPages(buscar,paginaActual,categoria);
                 
                 MostrarProductosCuidado.seguimiento.setText("Página " + paginaActual + " de " + totalPages);
                 DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
@@ -129,5 +174,25 @@ public class ProductosCuidado {
         }
     }
     
+    /* public static boolean Editar(QuerysProductosCuidados qp) {
+     String sql = QuerysProductosCuidados.ACTUALIZAR; // Obtener la consulta SQL para modificar un desde QuerysProductos
+
+        try {
+            ps = conexion.prepareStatement(sql); // Preparar la sentencia SQL
+            
+           ps.setString(1,qp.getNombre());
+            ps.setString(2,qp.getMarca());
+            ps.setString(3,qp.getCategoria());
+             ps.setString(4, qp.getTamano());
+            ps.setString(5,qp.getDescripcion());
+            ps.setInt(6,qp.getId());//   se agrego aqui tembien                            Establecer id en la consulta  
+
+            ps.executeUpdate(); // Ejecutar la consulta de inserción en la base de datos* actualiza la información de la base de datos
+            return true; // Indicar que el guardado fue exitoso
+        } catch (SQLException ex) {
+            return false; // Indicar que ocurrió un error durante el guardado
+//         Logger.getLogger(Funciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     }*/
     
 }

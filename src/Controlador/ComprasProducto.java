@@ -50,39 +50,54 @@ public class ComprasProducto {
         DefaultTableModel model = (DefaultTableModel)MostrarCompras.tblMostrarCompras.getModel();
            while(model.getRowCount() > 0 ){
             model.removeRow(0);
-        }
-        String sql = "";
+            }
+            String sql = "";
                 if (buscar.isEmpty()) {
-                sql = "SELECT CP.id, CP.numeroFactura, CP.cai, P.empresa, CP.tipoDeCompra, CP.fecha FROM comprasproductos AS CP JOIN provedores AS P ON CP.proveedor = P.id WHERE CP.fecha LIKE '%" + buscar + "%' or "+" P.empresa LIKE '%" + buscar + "%' or "+"CP.numeroFactura LIKE'%" + buscar + "%' limit " + filasxPagina + " offset " + (paginaActual - 1) * filasxPagina;
+                sql = "SELECT CP.id, CP.numeroFactura, CP.cai, P.empresa, CP.tipoDeCompra, CP.fecha, CP.total " +
+                "FROM comprasproductos AS CP " +
+                "JOIN provedores AS P ON CP.proveedor = P.id " +
+                "WHERE CP.fecha LIKE '%" + buscar + "%' OR P.empresa LIKE '%" + buscar + "%' OR CP.numeroFactura LIKE '%" + buscar + "%' " +
+                "ORDER BY CP.id " +  // Agrega esta línea para ordenar por CP.id
+                "LIMIT " + filasxPagina + " OFFSET " + (paginaActual - 1) * filasxPagina;
+
                 } else {
-                sql = "SELECT CP.id, CP.numeroFactura, CP.cai, P.empresa, CP.tipoDeCompra, CP.fecha FROM comprasproductos AS CP JOIN provedores AS P ON CP.proveedor = P.id WHERE CP.fecha LIKE '%" + buscar + "%' or "+"P.empresa LIKE '%" + buscar + "%' or "+"CP.numeroFactura LIKE'%" + buscar + "%'";
+                sql = "SELECT CP.id, CP.numeroFactura, CP.cai, P.empresa, CP.tipoDeCompra, CP.fecha, CP.total FROM comprasproductos AS CP JOIN provedores AS P ON CP.proveedor = P.id WHERE CP.fecha LIKE '%" + buscar + "%' or "+"P.empresa LIKE '%" + buscar + "%' or "+"CP.numeroFactura LIKE'%" + buscar + "%'";
                 }
  
         
-        String datos[] = new String[6];
+        String datos[] = new String[8];
         
         try{
         
             Statement st = conexion.createStatement();
             ResultSet rs = st.executeQuery(sql);
-            
+             int count = 0;
+            if(paginaActual ==1) {
+                count =1;
+            }else{
+                for(int i =1;i < paginaActual ; i++){
+                    count +=20;
+                }
+                count +=1;
+            }
             while(rs.next()){
-                
-                datos[0] = rs.getString("CP.numeroFactura");
-                datos[1] = rs.getString("CP.cai");
-                datos[2] = rs.getString("P.empresa");
-                datos[3] = rs.getString("CP.tipoDeCompra");
-                datos[4] = rs.getString("CP.fecha");
-                datos[5] = rs.getString("CP.id");
+                datos[0] = count +"";
+                datos[1] = rs.getString("CP.numeroFactura");
+                datos[2] = rs.getString("CP.cai");
+                datos[3] = rs.getString("P.empresa");
+                datos[4] = rs.getString("CP.tipoDeCompra");
+                datos[5] = rs.getString("CP.fecha");
+                datos[6] = rs.getString("CP.total");
+                datos[7] = rs.getString("CP.id");
+                count++;
                 model.addRow(datos);
-                totalPages = NumeroPages();
+            }
+              totalPages = NumeroPages();
                 MostrarCompras.seguimiento.setText("Página " + paginaActual + " de " + totalPages);
                 DefaultTableCellRenderer tcr = new DefaultTableCellRenderer();
                 tcr.setHorizontalAlignment(SwingConstants.RIGHT);
                 MostrarCompras.tblMostrarCompras.setModel(model);
-                
-            }
-           
+             
         }catch (SQLException ex){
             Logger.getLogger(ComprasProducto.class.getName()).log(Level.SEVERE, null, ex);
             

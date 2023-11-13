@@ -141,7 +141,7 @@
             </Constraint>
           </Constraints>
         </Component>
-        <Component class="javax.swing.JButton" name="btnGuardar">
+        <Component class="javax.swing.JButton" name="btnEditar">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="fa" green="fd" red="f9" type="rgb"/>
@@ -149,10 +149,10 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/imagenes/guardar.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Guardar"/>
+            <Property name="text" type="java.lang.String" value="Editar"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGuardarActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditarActionPerformed"/>
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
@@ -175,7 +175,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="410" y="620" width="-1" height="-1"/>
+              <AbsoluteConstraints x="350" y="630" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -295,7 +295,7 @@
                 <StringItem index="3" value="Decoraciones 3D"/>
                 <StringItem index="4" value="Esmalte semipermanente"/>
                 <StringItem index="5" value="Manicura francesa"/>
-                <StringItem index="6" value=" "/>
+                <StringItem index="6" value="Otra cosa"/>
               </StringArray>
             </Property>
           </Properties>
@@ -349,7 +349,7 @@
                 <StringItem index="5" value="Enpiedrado"/>
                 <StringItem index="6" value="Efecto espejo"/>
                 <StringItem index="7" value="Efecto Sugar"/>
-                <StringItem index="8" value="Egfecto Jersey"/>
+                <StringItem index="8" value="Efecto Jersey"/>
                 <StringItem index="9" value="Baby boomer"/>
               </StringArray>
             </Property>

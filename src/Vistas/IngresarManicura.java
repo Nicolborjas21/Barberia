@@ -127,7 +127,7 @@ public class IngresarManicura extends javax.swing.JFrame {
                 btnGuardarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 630, -1, -1));
+        jPanel1.add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 620, -1, -1));
 
         btnCancelar.setBackground(new java.awt.Color(249, 253, 250));
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/cancelar.png"))); // NOI18N
@@ -137,7 +137,7 @@ public class IngresarManicura extends javax.swing.JFrame {
                 btnCancelarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 620, -1, -1));
+        jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 620, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel6.setText("Diseño:");
@@ -182,7 +182,7 @@ public class IngresarManicura extends javax.swing.JFrame {
         jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 180, -1, -1));
 
         cbxCategoria.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        cbxCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Uñas acrílicas", "Uñas de gel", "Uñas de fibra de vidrio", "Decoraciones 3D", "Esmalte semipermanente", "Manicura francesa", " " }));
+        cbxCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Uñas acrílicas", "Uñas de gel", "Uñas de fibra de vidrio", "Decoraciones 3D", "Esmalte semipermanente", "Manicura francesa", "Otra cosa" }));
         jPanel1.add(cbxCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 180, 230, 30));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
@@ -193,7 +193,7 @@ public class IngresarManicura extends javax.swing.JFrame {
         jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 230, -1, -1));
 
         cbxEsmalte.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        cbxEsmalte.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acabado ballerina", "Acabado stiletto", "Almendrado", "Acabado cuadrado", "Decoracion natural", "Enpiedrado", "Efecto espejo", "Efecto Sugar", "Egfecto Jersey", "Baby boomer" }));
+        cbxEsmalte.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acabado ballerina", "Acabado stiletto", "Almendrado", "Acabado cuadrado", "Decoracion natural", "Enpiedrado", "Efecto espejo", "Efecto Sugar", "Efecto Jersey", "Baby boomer" }));
         jPanel1.add(cbxEsmalte, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 230, 230, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -273,6 +273,11 @@ public class IngresarManicura extends javax.swing.JFrame {
             return; // Salir del método
         }
     }
+    
+    if (foto.isEmpty() || foto1.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Debe seleccionar ambas imágenes", "Error de validación", JOptionPane.WARNING_MESSAGE);
+        return; // Salir del método si una o ambas imágenes no se han seleccionado
+    }
         
     // Comprueba si la conexión a la base de datos está establecida
     
@@ -282,16 +287,15 @@ public class IngresarManicura extends javax.swing.JFrame {
         querys.setPrecio(precio);
         querys.setTecnica(genero);
         
-        byte[] imagenBytes = obtenerBytesDeImagen(foto);
-        byte[] imageBytes = obtenerBytesDeImage(foto1);
-        
-        if (imagenBytes != null) {
-            querys.setFoto(imagenBytes);
-            if (imageBytes != null) {
-                querys.setFoto1(imageBytes);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
-            }
+       byte[] imagenBytes = obtenerBytesDeImagen(foto);
+        byte[] imageBytes = obtenerBytesDeImagen(foto1);
+
+        if (imagenBytes != null && imageBytes != null) {
+        querys.setFoto(imagenBytes);
+        querys.setFoto1(imageBytes);
+             } else {
+             JOptionPane.showMessageDialog(null, "No se pudieron cargar ambas imágenes", "Error de validación", JOptionPane.WARNING_MESSAGE);
+             return; // Salir del método si una o ambas imágenes no se pudieron cargar
         }
         
         querys.setEsmaltado(esmalte);
@@ -309,12 +313,11 @@ public class IngresarManicura extends javax.swing.JFrame {
   
  
     private byte[] obtenerBytesDeImagen(String rutaImagen) {
-   
-    File archivoImagen = new File(rutaImagen);
-    
+   File archivoImagen = new File(rutaImagen);
+
     // Verificar si el archivo de imagen existe
-   if (!archivoImagen.exists()) {
-        JOptionPane.showMessageDialog(null, "Debe selecionar una imágen", "Error de validación", JOptionPane.WARNING_MESSAGE);
+    if (!archivoImagen.exists()) {
+       // JOptionPane.showMessageDialog(null, "Debe seleccionar una imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return null; // Retorna null si el archivo no existe
     }
 
@@ -340,7 +343,7 @@ public class IngresarManicura extends javax.swing.JFrame {
     
     // Verificar si el archivo de imagen existe
    if (!archivoImagen.exists()) {
-        JOptionPane.showMessageDialog(null, "Debe selecionar la imágen", "Error de validación", JOptionPane.WARNING_MESSAGE);
+       // JOptionPane.showMessageDialog(null, "Debe selecionar la imágen", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return null; // Retorna null si el archivo no existe
     }
 

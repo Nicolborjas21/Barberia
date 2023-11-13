@@ -15,6 +15,8 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+
+import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import java.io.FileInputStream;
@@ -34,7 +36,7 @@ import javax.imageio.ImageIO;
 public class EditarManicura extends javax.swing.JFrame {
     
     private FileInputStream fis;
-    private int longitudBytes;
+   
     
     private String idTratamiento;
     private static Conexion con = new Conexion();
@@ -47,71 +49,69 @@ public class EditarManicura extends javax.swing.JFrame {
      */
     public EditarManicura(String idTratamiento) throws IOException{
          initComponents();
-        this.setLocationRelativeTo(null);
-        getContentPane().setBackground(Color.white);
-        this.idTratamiento = idTratamiento;
-        // Aquí deberías usar el ID para cargar los datos del corte en los componentes visuales (por ejemplo, lblNombre, lblPrecio, etc.).
-        cargarDatosDeManicura();
-    }
+    this.setLocationRelativeTo(null);
+    getContentPane().setBackground(Color.white);
+    txtId.setVisible(false);
+    this.idTratamiento = idTratamiento;
+    cargarDatosDeManicura();
+}
     
-    private EditarManicura(){
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private void cargarDatosDeManicura() {
+    try {
+        // Cargar la consulta SQL desde el archivo 'QuerysCortes'.
+        String consultaSQL = QuerysManicura.VerImagen;
 
-    }
-    
-    private void cargarDatosDeManicura(){
-        try {
-            
-             // Cargar la consulta SQL desde el archivo 'QuerysCortes'.
-            String consultaSQL = QuerysManicura.VerImagen;
-        
-            // Crear una sentencia preparada con la consulta SQL.
-            PreparedStatement ps = conexion.prepareStatement(consultaSQL);
-            ps.setString(1, idTratamiento); 
-        
-            // Ejecutar la consulta y obtener el resultado.
-            var rs = ps.executeQuery();
-        
-            if(rs.next()){
-                Blob Foto1Blob = (Blob) rs.getBlob("Foto1");
-                Blob Foto2Blob = (Blob) rs.getBlob("Foto2");
-            
-                InputStream foto1Stream = Foto1Blob.getBinaryStream();
-                InputStream foto2Stream = Foto2Blob.getBinaryStream();
-            
-                Foto1Image = ImageIO.read(foto1Stream);
-                Foto2Image = ImageIO.read(foto2Stream);
-            
-           
-                // Tamaño fijo para las imágenes
-                int imagenAncho = 200; // Ancho deseado en píxeles
-                int imagenAlto = 200; // Alto deseado en píxeles
-            
-                if (Foto1Image != null) {
-                    Foto1Image = resizeImage(Foto1Image, imagenAncho, imagenAlto);
-                    Label_Foto1.setIcon(new ImageIcon(Foto1Image));
-                    Label_Foto1.setText(""); // Borra cualquier texto previo
-                } else {
-                    Label_Foto1.setText("<html><div style='text-align: center;'>No hay imagen<br>disponible</div></html>");
-                    Label_Foto1.setForeground(Color.RED);
-                }
-                if (Foto2Image != null) {
-                    Foto2Image = resizeImage(Foto2Image, imagenAncho, imagenAlto);
-                    Label_Foto2.setIcon(new ImageIcon(Foto2Image));
-                    Label_Foto2.setText(""); // Borra cualquier texto previo
-                } else {
-                    Label_Foto2.setText("<html><div style='text-align: center;'>No hay imagen<br>disponible</div></html>");
-                    Label_Foto2.setForeground(Color.RED);
-                }
+        // Crear una sentencia preparada con la consulta SQL.
+        PreparedStatement ps = conexion.prepareStatement(consultaSQL);
+        ps.setString(1, idTratamiento);
+
+        // Ejecutar la consulta y obtener el resultado.
+        var rs = ps.executeQuery();
+
+        if (rs.next()) {
+            Blob Foto1Blob = (Blob) rs.getBlob("Foto1");
+            Blob Foto2Blob = (Blob) rs.getBlob("Foto2");
+
+            InputStream foto1Stream = Foto1Blob.getBinaryStream();
+            InputStream foto2Stream = Foto2Blob.getBinaryStream();
+
+            Foto1Image = ImageIO.read(foto1Stream);
+            Foto2Image = ImageIO.read(foto2Stream);
+
+            // Tamaño fijo para las imágenes
+            int imagenAncho = 200; // Ancho deseado en píxeles
+            int imagenAlto = 200; // Alto deseado en píxeles
+
+            if (Foto1Image != null) {
+                Foto1Image = resizeImage(Foto1Image, imagenAncho, imagenAlto);
+                Label_Foto1.setIcon(new ImageIcon(Foto1Image));
+                Label_Foto1.setText(""); // Borra cualquier texto previo
+            } else {
+                Label_Foto1.setText("<html><div style='text-align: center;'>No hay imagen<br>disponible</div></html>");
+                Label_Foto1.setForeground(Color.RED);
             }
-            // Cierra los recursos (ResultSet, PreparedStatement).
+            if (Foto2Image != null) {
+                Foto2Image = resizeImage(Foto2Image, imagenAncho, imagenAlto);
+                Label_Foto2.setIcon(new ImageIcon(Foto2Image));
+                Label_Foto2.setText(""); // Borra cualquier texto previo
+            } else {
+                Label_Foto2.setText("<html><div style='text-align: center;'>No hay imagen<br>disponible</div></html>");
+                Label_Foto2.setForeground(Color.RED);
+            }
+        }
+        // Cierra los recursos (ResultSet, PreparedStatement).
+        rs.close();
+        ps.close();
+    // Cierra los recursos (ResultSet, PreparedStatement).
             rs.close();
             ps.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-    }
+}
+
+    
+
     public BufferedImage getFoto1Image() {
         return Foto1Image;
     }
@@ -151,7 +151,7 @@ public class EditarManicura extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
         txtPrecio = new javax.swing.JTextField();
-        btnGuardar = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -212,15 +212,15 @@ public class EditarManicura extends javax.swing.JFrame {
         });
         jPanel1.add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 130, 230, -1));
 
-        btnGuardar.setBackground(new java.awt.Color(249, 253, 250));
-        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/guardar.png"))); // NOI18N
-        btnGuardar.setText("Guardar");
-        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+        btnEditar.setBackground(new java.awt.Color(249, 253, 250));
+        btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/guardar.png"))); // NOI18N
+        btnEditar.setText("Editar");
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardarActionPerformed(evt);
+                btnEditarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 630, -1, -1));
+        jPanel1.add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 630, -1, -1));
 
         btnCancelar.setBackground(new java.awt.Color(249, 253, 250));
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/cancelar.png"))); // NOI18N
@@ -230,7 +230,7 @@ public class EditarManicura extends javax.swing.JFrame {
                 btnCancelarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 620, -1, -1));
+        jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 630, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel6.setText("Diseño:");
@@ -275,7 +275,7 @@ public class EditarManicura extends javax.swing.JFrame {
         jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 180, -1, -1));
 
         cbxCategoria.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        cbxCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Uñas acrílicas", "Uñas de gel", "Uñas de fibra de vidrio", "Decoraciones 3D", "Esmalte semipermanente", "Manicura francesa", " " }));
+        cbxCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Uñas acrílicas", "Uñas de gel", "Uñas de fibra de vidrio", "Decoraciones 3D", "Esmalte semipermanente", "Manicura francesa", "Otra cosa" }));
         jPanel1.add(cbxCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 180, 230, 30));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
@@ -286,7 +286,7 @@ public class EditarManicura extends javax.swing.JFrame {
         jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 230, -1, -1));
 
         cbxEsmalte.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        cbxEsmalte.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acabado ballerina", "Acabado stiletto", "Almendrado", "Acabado cuadrado", "Decoracion natural", "Enpiedrado", "Efecto espejo", "Efecto Sugar", "Egfecto Jersey", "Baby boomer" }));
+        cbxEsmalte.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acabado ballerina", "Acabado stiletto", "Almendrado", "Acabado cuadrado", "Decoracion natural", "Enpiedrado", "Efecto espejo", "Efecto Sugar", "Efecto Jersey", "Baby boomer" }));
         jPanel1.add(cbxEsmalte, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 230, 230, -1));
         jPanel1.add(txtId, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 50, -1, -1));
 
@@ -321,7 +321,7 @@ public class EditarManicura extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPrecioActionPerformed
 
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
     String foto = Label_Foto1.getText().trim();
     String foto1 = Label_Foto2.getText().trim();
     
@@ -357,8 +357,7 @@ public class EditarManicura extends javax.swing.JFrame {
             return; // Salir del método si el precio no es válido
         }
         String direccion = txtDireccion.getText().trim();
-    
-    if (direccion.isEmpty()) {
+        if (direccion.isEmpty()) {
         JOptionPane.showMessageDialog(null, "La descripción de la manicura o pedicura no puede estar vacía", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return; // Salir del método si el campo está vacío
     }
@@ -369,76 +368,84 @@ public class EditarManicura extends javax.swing.JFrame {
             return; // Salir del método
         }
     }
-        
-    // Comprueba si la conexión a la base de datos está establecida
     
         // La conexión está activa y válida, puedes proceder con la operación
-        QuerysManicura querys = new QuerysManicura();
-        querys.setEstilo(nombre);
-        querys.setPrecio(precio);
-        querys.setTecnica(genero);
-        
-        byte[] imagenBytes = obtenerBytesDeImagen(foto);
-        byte[] imageBytes = obtenerBytesDeImage(foto1);
-        
-        if (imagenBytes != null) {
-            querys.setFoto(imagenBytes);
-            if (imageBytes != null) {
-                querys.setFoto1(imageBytes);
-            } else {
-                JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
-            }
-        }
-        
-        querys.setEsmaltado(esmalte);
-        querys.setDescripcion(direccion);
-        querys.setId(idtxt);
-        
-        
-        if (Manicura.Editar(querys)) {
-            JOptionPane.showMessageDialog(null, "Nueva manicura o pedicura ingresada exitosamente");
-            dispose();
+       QuerysManicura querys = new QuerysManicura();
+    querys.setId(idtxt);
+    querys.setEstilo(nombre);
+    querys.setPrecio(precio);
+    querys.setTecnica(genero);
+
+    // Verificar y cargar la primera imagen si es necesario
+    if (!foto.isEmpty()) {
+    byte[] imagenBytes = obtenerBytesDeImagen(foto);
+    if (imagenBytes != null) {
+        querys.setFoto(imagenBytes);
+    } else {
+        JOptionPane.showMessageDialog(null, "No se pudo cargar la primera imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+}
+
+    // Verificar y cargar la segunda imagen si es necesario
+    if (!foto1.isEmpty()) {
+        byte[] imagenBytes1 = obtenerBytesDeImagen(foto1);
+        if (imagenBytes1 != null) {
+            querys.setFoto1(imagenBytes1);
         } else {
-            JOptionPane.showMessageDialog(null, "Algo falló, consulte con el administrador del sistema", "Error al guardar", JOptionPane.OK_OPTION);
+            JOptionPane.showMessageDialog(null, "No se pudo cargar la segunda imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    
-      
-    }//GEN-LAST:event_btnGuardarActionPerformed
+    }
+
+    querys.setEsmaltado(esmalte);
+    querys.setDescripcion(direccion);  
+
+    if (Manicura.Editar(querys)) {
+        JOptionPane.showMessageDialog(null, "Manicura o pedicura actualizada con éxito");
+        dispose();
+    } else {
+        JOptionPane.showMessageDialog(null, "Algo falló, consulte con el administrador del sistema", "Error al guardar", JOptionPane.OK_OPTION);
+    }
+
+    }//GEN-LAST:event_btnEditarActionPerformed
   
  
-    private byte[] obtenerBytesDeImagen(String rutaImagen) {
-   
+   private byte[] obtenerBytesDeImagen(String rutaImagen) {
     File archivoImagen = new File(rutaImagen);
-    
+
     // Verificar si el archivo de imagen existe
-   if (!archivoImagen.exists()) {
-        JOptionPane.showMessageDialog(null, "Debe selecionar una imágen de perfil izquierdo", "Error de validación", JOptionPane.WARNING_MESSAGE);
+    if (!archivoImagen.exists()) {
+        System.out.println("La imagen no existe en la ruta especificada: " + rutaImagen);
         return null; // Retorna null si el archivo no existe
     }
 
     // Continuar con la carga de la imagen
-    try {
-        FileInputStream fis = new FileInputStream(archivoImagen);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    try (FileInputStream fis = new FileInputStream(archivoImagen);
+         ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+
         byte[] buffer = new byte[1024];
         int bytesRead;
+
         while ((bytesRead = fis.read(buffer)) != -1) {
             bos.write(buffer, 0, bytesRead);
         }
+
         return bos.toByteArray();
     } catch (IOException e) {
         e.printStackTrace();
+        System.out.println("Error al cargar la imagen desde la ruta: " + rutaImagen);
         return null; // Retorna null si hay un error al cargar la imagen
     }
 }
-    
+   
      private byte[] obtenerBytesDeImage(String rutaImagen) {
    
     File archivoImagen = new File(rutaImagen);
     
     // Verificar si el archivo de imagen existe
    if (!archivoImagen.exists()) {
-        JOptionPane.showMessageDialog(null, "Debe selecionar la imágen de frente", "Error de validación", JOptionPane.WARNING_MESSAGE);
+      //  JOptionPane.showMessageDialog(null, "Debe selecionar una imágen", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return null; // Retorna null si el archivo no existe
     }
 
@@ -526,29 +533,26 @@ public class EditarManicura extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPrecioKeyTyped
 
     private void txtDireccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDireccionKeyTyped
-        
-        txtDireccion.setText(txtDireccion.getText().replaceAll("( )+", " "));
-        if (txtDireccion.getText().length() == 0 && evt.getKeyChar() == ' ') {
-                    evt.consume();
-                }      
-        
-        
-         char c = evt.getKeyChar();
-         if(Character.isDigit(c)){
+            txtDireccion.setText(txtDireccion.getText().replaceAll("( )+", " "));
+    if (txtDireccion.getText().length() == 0 && evt.getKeyChar() == ' ') {
+        evt.consume();
+    }
+
+    char c = evt.getKeyChar();
+    if (!Character.isDigit(c)) {
+        // Si el carácter no es un dígito, verifica otras condiciones
+        int tam = txtDireccion.getText().length();
+        if (tam >= 180) {
+            evt.consume();
+        } else if ((int) evt.getKeyChar() > 32 && (int) evt.getKeyChar() <= 47
+                || (int) evt.getKeyChar() >= 58 && (int) evt.getKeyChar() <= 64
+                || (int) evt.getKeyChar() >= 91 && (int) evt.getKeyChar() <= 96
+                || (int) evt.getKeyChar() >= 123 && (int) evt.getKeyChar() <= 159
+                || (int) evt.getKeyChar() >= 166 && (int) evt.getKeyChar() <= 255) {
             getToolkit().beep();
             evt.consume();
-         }
-            int tam = txtDireccion.getText().length();
-        if(tam>=180){
-            evt.consume();
-        }  else if((int)evt.getKeyChar()>32 && (int)evt.getKeyChar()<=47
-                ||(int)evt.getKeyChar()>=58 && (int)evt.getKeyChar()<=64
-                ||(int)evt.getKeyChar()>=91 && (int)evt.getKeyChar()<=96
-                ||(int)evt.getKeyChar()>=123 && (int)evt.getKeyChar()<=159
-                ||(int)evt.getKeyChar()>=166 && (int)evt.getKeyChar()<=255){
-             getToolkit().beep();
-            evt.consume();
         }
+    }
            
     }//GEN-LAST:event_txtDireccionKeyTyped
 
@@ -597,47 +601,53 @@ public class EditarManicura extends javax.swing.JFrame {
     }//GEN-LAST:event_Label_Foto2MouseClicked
 
     private void Label_Foto1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Label_Foto1MouseClicked
+        // Verificar si Label_Foto1 ya contiene una ruta de imagen
+    if (!Label_Foto1.getText().isEmpty()) {
+        // Utilizar la ruta de imagen existente sin abrir el diálogo de selección
+        return;
+    }
 
-        JFileChooser se = new JFileChooser();
+    // Si no hay una imagen existente, abrir el diálogo de selección
+    JFileChooser se = new JFileChooser();
+    
+    // Agregar un filtro para seleccionar solo archivos PNG
+    FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes PNG", "jpg");
+    se.setFileFilter(filter);
+    
+    se.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    int estado = se.showOpenDialog(null);
 
-        // Agregar un filtro para seleccionar solo archivos PNG
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes PNG", "jpg");
-        se.setFileFilter(filter);
+    if (estado == JFileChooser.APPROVE_OPTION) {
+        try {
+            File archivoSeleccionado = se.getSelectedFile();
 
-        se.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        int estado = se.showOpenDialog(null);
+            if (archivoSeleccionado != null) {
+                String rutImagen = archivoSeleccionado.getAbsolutePath();
+                byte[] imageBytes = obtenerBytesDeImagen(rutImagen);
 
-        if (estado == JFileChooser.APPROVE_OPTION) {
-            try {
-                File archivoSeleccionado = se.getSelectedFile();
+                if (imageBytes != null) {
+                    ImageIcon icono = new ImageIcon(imageBytes);
+                    Image imagen = icono.getImage();
 
-                if (archivoSeleccionado != null) {
-                    String ruaImagen = archivoSeleccionado.getAbsolutePath();
-                    byte[] imagenBytes = obtenerBytesDeImagen(ruaImagen);
+                    // Redimensionar la imagen para ajustar al tamaño del Label_Foto1
+                    int ancho = Label_Foto1.getWidth();
+                    int alto = Label_Foto1.getHeight();
+                    Image imagenRedimensionada = imagen.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
 
-                    if (imagenBytes != null) {
-                        ImageIcon icono = new ImageIcon(imagenBytes);
-                        Image imagen = icono.getImage();
+                    // Crear un nuevo ImageIcon con la imagen redimensionada
+                    ImageIcon iconoRedimensionado = new ImageIcon(imagenRedimensionada);
 
-                        // Redimensionar la imagen para ajustar al tamaño del Label_Foto
-                        int ancho = Label_Foto1.getWidth();
-                        int alto = Label_Foto1.getHeight();
-                        Image imagenRedimensionada = imagen.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
-
-                        // Crear un nuevo ImageIcon con la imagen redimensionada
-                        ImageIcon iconoRedimensionado = new ImageIcon(imagenRedimensionada);
-
-                        // Mostrar la imagen en el componente Label_Foto
-                        Label_Foto1.setIcon(iconoRedimensionado);
-                        Label_Foto1.setText(ruaImagen); // Actualiza el texto del Label con la ruta
-                    } else {
-                        JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
-                    }
+                    // Mostrar la imagen en el componente Label_Foto1
+                    Label_Foto1.setIcon(iconoRedimensionado);
+                    Label_Foto1.setText(rutImagen); // Actualiza el texto del Label con la ruta
+                } else {
+                    JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
     }//GEN-LAST:event_Label_Foto1MouseClicked
 
     /**
@@ -677,7 +687,7 @@ public class EditarManicura extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new EditarManicura().setVisible(true);
+           
             }
         });
     }
@@ -686,7 +696,7 @@ public class EditarManicura extends javax.swing.JFrame {
     public static javax.swing.JLabel Label_Foto1;
     public static javax.swing.JLabel Label_Foto2;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnEditar;
     public static javax.swing.JComboBox<String> cbxCategoria;
     public static javax.swing.JComboBox<String> cbxEsmalte;
     private javax.swing.JLabel jLabel1;
@@ -705,11 +715,7 @@ public class EditarManicura extends javax.swing.JFrame {
     public static javax.swing.JTextField txtPrecio;
     // End of variables declaration//GEN-END:variables
 
-    private static class SQLException {
-
-        public SQLException() {
-        }
-    }
+   
 
     
 }

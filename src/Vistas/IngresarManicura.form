@@ -150,7 +150,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="130" y="630" width="-1" height="-1"/>
+              <AbsoluteConstraints x="140" y="620" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -169,7 +169,7 @@
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-              <AbsoluteConstraints x="410" y="620" width="-1" height="-1"/>
+              <AbsoluteConstraints x="400" y="620" width="-1" height="-1"/>
             </Constraint>
           </Constraints>
         </Component>
@@ -280,7 +280,7 @@
                 <StringItem index="3" value="Decoraciones 3D"/>
                 <StringItem index="4" value="Esmalte semipermanente"/>
                 <StringItem index="5" value="Manicura francesa"/>
-                <StringItem index="6" value=" "/>
+                <StringItem index="6" value="Otra cosa"/>
               </StringArray>
             </Property>
           </Properties>
@@ -334,7 +334,7 @@
                 <StringItem index="5" value="Enpiedrado"/>
                 <StringItem index="6" value="Efecto espejo"/>
                 <StringItem index="7" value="Efecto Sugar"/>
-                <StringItem index="8" value="Egfecto Jersey"/>
+                <StringItem index="8" value="Efecto Jersey"/>
                 <StringItem index="9" value="Baby boomer"/>
               </StringArray>
             </Property>

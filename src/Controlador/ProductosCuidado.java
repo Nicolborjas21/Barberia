@@ -174,7 +174,7 @@ public class ProductosCuidado {
         }
     }
     
-    /* public static boolean Editar(QuerysProductosCuidados qp) {
+    public static boolean Editar(QuerysProductosCuidados qp) {
      String sql = QuerysProductosCuidados.ACTUALIZAR; // Obtener la consulta SQL para modificar un desde QuerysProductos
 
         try {
@@ -193,6 +193,6 @@ public class ProductosCuidado {
             return false; // Indicar que ocurrió un error durante el guardado
 //         Logger.getLogger(Funciones.class.getName()).log(Level.SEVERE, null, ex);
         }
-     }*/
+    }
     
 }

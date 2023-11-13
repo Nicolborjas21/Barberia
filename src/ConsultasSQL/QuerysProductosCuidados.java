@@ -78,4 +78,7 @@ public class QuerysProductosCuidados {
             + "VALUES(?,?,?,?,?)";
     
     public static String ListarProductos = "SELECT * FROM catalogo_productos";
+    
+    public static String ACTUALIZAR = "UPDATE catalogo_productos SET nombre = ?, marca = ?,  categoria=?,tamano = ?, descripcion=? WHERE id = ?";
+
 }

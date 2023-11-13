@@ -85,4 +85,7 @@ public class QuerysTratamiento {
             +"VALUES(?,?,?,?,?,?,?)";
     
     public static String ListarTratamiento = "SELECT * FROM tratamientos";
+    
+     public static String VerTratamiento = "SELECT Nombre, tipoTratamiento,Descripcion, Foto1, Foto2, NombreProductos, estado FROM tratamientos WHERE id = ?";
+    
 }

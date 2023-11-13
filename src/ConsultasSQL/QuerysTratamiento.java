@@ -13,6 +13,7 @@ public class QuerysTratamiento {
     private byte[] Foto1;
     private byte[] Foto2;
     private String NomreProductos;
+    private String estado = "activo";
 
     public int getId() {
         return id;
@@ -70,13 +71,18 @@ public class QuerysTratamiento {
         this.NomreProductos = NomreProductos;
     }
     
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    
     public static String RegistroTratamiento = "INSERT INTO tratamientos("
-            +"Nombre,"+"tipoTratamiento,"+"Descripcion,"+"Foto1,"+"Foto2,"+"NombreProductos)"
-            +"VALUES(?,?,?,?,?,?)";
+            +"Nombre,"+"tipoTratamiento,"+"Descripcion,"+"Foto1,"+"Foto2,"+"NombreProductos,"+"estado)"
+            +"VALUES(?,?,?,?,?,?,?)";
     
     public static String ListarTratamiento = "SELECT * FROM tratamientos";
-    
-    public static String VerTratamiento = "SELECT Nombre, tipoTratamiento,Descripcion, Foto1, Foto2, NombreProductos FROM tratamientos WHERE id = ?";
-    public static String VerFoto = "SELECT Foto1, Foto2 FROM tratamientos WHERE id = ?";
-    
 }

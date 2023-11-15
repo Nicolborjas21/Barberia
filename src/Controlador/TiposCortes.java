@@ -8,7 +8,6 @@ import Conexion.Conexion;
 import ConsultasSQL.QuerysCortes;
 import java.sql.ResultSet;
 import Vistas.MostrarCortes;
-import com.mysql.cj.xdevapi.Statement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -30,7 +29,7 @@ public class TiposCortes {
     private static PreparedStatement ps = null;
     
     // Declarar una variable para establecer el tamaño de la página (número de elementos a mostrar por página)
-    public static final int PAGE_SIZE = 5;
+    public static final int PAGE_SIZE = 10;
     // Declarar una variable para almacenar el número de página actual
     public static int currentPage = 1;
     // Declarar una variable para almacenar el número total de páginas
@@ -44,13 +43,19 @@ public class TiposCortes {
         ps = conexion.prepareStatement(sql);
         ps.setString(1, qp.getNombre_cortr());
         ps.setString(2, qp.getGenero());
-        Blob blob = conexion.createBlob();
-            blob.setBytes(1, qp.getCorte());
-            ps.setBlob(3, blob);
-            blob.setBytes(1, qp.getCorte2());
-            ps.setBlob(4, blob);
-            blob.setBytes(1, qp.getCorte3());
-            ps.setBlob(5, blob);
+       
+        Blob blob1 = conexion.createBlob();
+        blob1.setBytes(1, qp.getCorte());
+        ps.setBlob(3, blob1);
+
+        Blob blob2 = conexion.createBlob();
+        blob2.setBytes(1, qp.getCorte2());
+        ps.setBlob(4, blob2);
+
+        Blob blob3 = conexion.createBlob();
+        blob3.setBytes(1, qp.getCorte3());
+        ps.setBlob(5, blob3);
+        
         ps.setDouble(6, qp.getPrecio());
         ps.setString(7, qp.getDescripcion());
         

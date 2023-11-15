@@ -174,5 +174,25 @@ public class ProductosCuidado {
         }
     }
     
+    public static boolean Editar(QuerysProductosCuidados qp) {
+     String sql = QuerysProductosCuidados.ACTUALIZAR; // Obtener la consulta SQL para modificar un desde QuerysProductos
+
+        try {
+            ps = conexion.prepareStatement(sql); // Preparar la sentencia SQL
+            
+           ps.setString(1,qp.getNombre());
+            ps.setString(2,qp.getMarca());
+            ps.setString(3,qp.getCategoria());
+             ps.setString(4, qp.getTamano());
+            ps.setString(5,qp.getDescripcion());
+            ps.setInt(6,qp.getId());//   se agrego aqui tembien                            Establecer id en la consulta  
+
+            ps.executeUpdate(); // Ejecutar la consulta de inserción en la base de datos* actualiza la información de la base de datos
+            return true; // Indicar que el guardado fue exitoso
+        } catch (SQLException ex) {
+            return false; // Indicar que ocurrió un error durante el guardado
+//         Logger.getLogger(Funciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
 }

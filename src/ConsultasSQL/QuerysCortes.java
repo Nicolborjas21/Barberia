@@ -92,5 +92,5 @@ public class QuerysCortes {
     
     public static String LISTARCORTES = "SELECT * FROM catalogo_cortes";
     
-    public static String VerCortes = "SELECT nombre_corte, genero, corte, cote2, corte3, precio, descripcion FROM catalogo_cortes WHERE id = ?";
+     public static String VerCortes = "SELECT nombre_corte, genero, corte, cote2, corte3, precio, descripcion FROM catalogo_cortes WHERE id = ?";
 }

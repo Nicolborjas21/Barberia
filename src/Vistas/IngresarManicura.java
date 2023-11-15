@@ -4,30 +4,29 @@
  */
 package Vistas;
 
-import ConsultasSQL.QuerysCortes;
-import Controlador.TiposCortes;
-import static com.sun.java.accessibility.util.AWTEventMonitor.addActionListener;
+import Conexion.Conexion;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import ConsultasSQL.QuerysManicura;
+import Controlador.Manicura;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
- * @author Alejandra Suárez
+ * @author Josue
  */
 
 
-public class IngresarCorte extends javax.swing.JFrame {
+public class IngresarManicura extends javax.swing.JFrame {
     
     private FileInputStream fis;
     private int longitudBytes;
@@ -37,7 +36,7 @@ public class IngresarCorte extends javax.swing.JFrame {
     /**
      * Creates new form CrearCliente
      */
-    public IngresarCorte() {
+    public IngresarManicura() {
         initComponents();
         this.setLocationRelativeTo(null);
         
@@ -65,15 +64,13 @@ public class IngresarCorte extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDireccion = new javax.swing.JTextArea();
-        Label_Foto3 = new javax.swing.JLabel();
         Label_Foto1 = new javax.swing.JLabel();
         Label_Foto2 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         cbxCategoria = new javax.swing.JComboBox<>();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        cbxEsmalte = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -81,20 +78,20 @@ public class IngresarCorte extends javax.swing.JFrame {
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Dubai", 1, 24)); // NOI18N
-        jLabel1.setText("Agregar corte de cabello");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(235, 20, -1, -1));
+        jLabel1.setText("Agregar manicura o pedicura");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 20, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel2.setText("Nombre del corte:");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 100, -1, -1));
+        jLabel2.setText("Estilo:");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel3.setText("Precio:");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 160, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 130, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         jLabel4.setText("Descripción:");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 250, -1, -1));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 280, -1, -1));
 
         txtNombre.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtNombre.addActionListener(new java.awt.event.ActionListener() {
@@ -107,7 +104,7 @@ public class IngresarCorte extends javax.swing.JFrame {
                 txtNombreKeyTyped(evt);
             }
         });
-        jPanel1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 100, 230, -1));
+        jPanel1.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, 230, -1));
 
         txtPrecio.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         txtPrecio.addActionListener(new java.awt.event.ActionListener() {
@@ -120,7 +117,7 @@ public class IngresarCorte extends javax.swing.JFrame {
                 txtPrecioKeyTyped(evt);
             }
         });
-        jPanel1.add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 160, 230, -1));
+        jPanel1.add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 130, 230, -1));
 
         btnGuardar.setBackground(new java.awt.Color(249, 253, 250));
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/guardar.png"))); // NOI18N
@@ -130,7 +127,7 @@ public class IngresarCorte extends javax.swing.JFrame {
                 btnGuardarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 630, -1, -1));
+        jPanel1.add(btnGuardar, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 620, -1, -1));
 
         btnCancelar.setBackground(new java.awt.Color(249, 253, 250));
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/cancelar.png"))); // NOI18N
@@ -140,11 +137,11 @@ public class IngresarCorte extends javax.swing.JFrame {
                 btnCancelarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 640, -1, -1));
+        jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 620, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel6.setText("Corte:");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 370, -1, -1));
+        jLabel6.setText("Diseño:");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 380, -1, -1));
 
         txtDireccion.setColumns(20);
         txtDireccion.setLineWrap(true);
@@ -156,18 +153,7 @@ public class IngresarCorte extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(txtDireccion);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 260, -1, 100));
-
-        Label_Foto3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        Label_Foto3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        Label_Foto3.setText("Foto 3");
-        Label_Foto3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        Label_Foto3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                Label_Foto3MouseClicked(evt);
-            }
-        });
-        jPanel1.add(Label_Foto3, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 440, 190, 180));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 280, -1, 100));
 
         Label_Foto1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         Label_Foto1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -178,7 +164,7 @@ public class IngresarCorte extends javax.swing.JFrame {
                 Label_Foto1MouseClicked(evt);
             }
         });
-        jPanel1.add(Label_Foto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 440, 200, 180));
+        jPanel1.add(Label_Foto1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 410, 200, 180));
 
         Label_Foto2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         Label_Foto2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -189,30 +175,26 @@ public class IngresarCorte extends javax.swing.JFrame {
                 Label_Foto2MouseClicked(evt);
             }
         });
-        jPanel1.add(Label_Foto2, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 440, 190, 180));
+        jPanel1.add(Label_Foto2, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 410, 190, 180));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel7.setText("Genero:");
-        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 210, -1, -1));
+        jLabel7.setText("Técnica:");
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 180, -1, -1));
 
         cbxCategoria.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        cbxCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Masculino", "Femenino" }));
-        jPanel1.add(cbxCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(214, 210, 230, 30));
-
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel8.setText("Izquierdo");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 410, -1, -1));
-
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel9.setText("Frente");
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 410, -1, -1));
-
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        jLabel10.setText("Derecho");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 410, -1, -1));
+        cbxCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Uñas acrílicas", "Uñas de gel", "Uñas de fibra de vidrio", "Decoraciones 3D", "Esmalte semipermanente", "Manicura francesa", "Otra cosa" }));
+        jPanel1.add(cbxCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 180, 230, 30));
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/ListaodologoBarberia.png"))); // NOI18N
         jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 70, 100, 120));
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        jLabel11.setText("Esmaltado:");
+        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 230, -1, -1));
+
+        cbxEsmalte.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        cbxEsmalte.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Acabado ballerina", "Acabado stiletto", "Almendrado", "Acabado cuadrado", "Decoracion natural", "Enpiedrado", "Efecto espejo", "Efecto Sugar", "Efecto Jersey", "Baby boomer" }));
+        jPanel1.add(cbxEsmalte, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 230, 230, -1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -225,7 +207,9 @@ public class IngresarCorte extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 734, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 748, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         pack();
@@ -246,21 +230,25 @@ public class IngresarCorte extends javax.swing.JFrame {
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
     String foto = Label_Foto1.getText().trim();
     String foto1 = Label_Foto2.getText().trim();
-    String foto3 = Label_Foto3.getText().trim();
+    
     String nombre = txtNombre.getText().trim();
     
     if (nombre.isEmpty()) {
-        JOptionPane.showMessageDialog(null, "El nombre del corte no puede estar vacío", "Error de validación", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(null, "El nombre del estilo no puede estar vacío", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return; // Salir del método si el campo está vacío
     }
     
     
     String genero = cbxCategoria.getSelectedItem().toString(); // que no este vacio, que solo seleccione 1
         if(genero.equals("seleccione un sexo")){
-         JOptionPane.showMessageDialog(this, "No ha seleccionado ninguna sexo", "Error de validación", JOptionPane.INFORMATION_MESSAGE);
+         JOptionPane.showMessageDialog(this, "No ha seleccionado ninguna tecnica", "Error de validación", JOptionPane.INFORMATION_MESSAGE);
             return; // Salir del método si el campo está vacío
         }
-    
+    String esmalte = cbxEsmalte.getSelectedItem().toString(); // que no este vacio, que solo seleccione 1
+        if(esmalte.equals("seleccione un esmaltado")){
+         JOptionPane.showMessageDialog(this, "No ha seleccionado ninguna esmaltado", "Error de validación", JOptionPane.INFORMATION_MESSAGE);
+            return; // Salir del método si el campo está vacío
+        }
     String valor = txtPrecio.getText().trim(); 
     if (valor.isEmpty()) {
         JOptionPane.showMessageDialog(null, "El precio está vacío", "Error de validación", JOptionPane.WARNING_MESSAGE);
@@ -275,7 +263,7 @@ public class IngresarCorte extends javax.swing.JFrame {
         String direccion = txtDireccion.getText().trim();
     
     if (direccion.isEmpty()) {
-        JOptionPane.showMessageDialog(null, "La descripción del corte no puede estar vacía", "Error de validación", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(null, "La descripción de la manicura o pedicura no puede estar vacía", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return; // Salir del método si el campo está vacío
     }
     
@@ -285,49 +273,51 @@ public class IngresarCorte extends javax.swing.JFrame {
             return; // Salir del método
         }
     }
-        
-        // Validación de la imagen
-       
-        
-        QuerysCortes querys = new QuerysCortes();
-        querys.setNombre_cortr(nombre);
-        querys.setDescripcion(direccion);
-        querys.setPrecio(Double.parseDouble(valor));
-        querys.setGenero(genero);
-        
-        byte[] imagenBytes = obtenerBytesDeImagen(foto);
-        byte[] imageBytes = obtenerBytesDeImage(foto1);
-        byte[] imageByte = obtenerByteDeImagen(foto3);
-        if (imagenBytes != null) {
-            querys.setCorte(imagenBytes);
-            if(imageBytes != null){
-                querys.setCorte2(imageBytes);
-                if(imageByte != null){
-                    querys.setCorte3(imageByte);
-                
-            if (TiposCortes.Guardar(querys)) {
-                JOptionPane.showMessageDialog(null, "Nuevo corte ingresado exitosamente");
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(null, "Algo falló, consulte con el administrador del sistema", "Error al guardar", JOptionPane.OK_OPTION);
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
-            } 
-        }
-        }
-   
     
+    if (foto.isEmpty() || foto1.isEmpty()) {
+        JOptionPane.showMessageDialog(null, "Debe seleccionar ambas imágenes", "Error de validación", JOptionPane.WARNING_MESSAGE);
+        return; // Salir del método si una o ambas imágenes no se han seleccionado
+    }
+        
+    // Comprueba si la conexión a la base de datos está establecida
+    
+        // La conexión está activa y válida, puedes proceder con la operación
+        QuerysManicura querys = new QuerysManicura();
+        querys.setEstilo(nombre);
+        querys.setPrecio(precio);
+        querys.setTecnica(genero);
+        
+       byte[] imagenBytes = obtenerBytesDeImagen(foto);
+        byte[] imageBytes = obtenerBytesDeImagen(foto1);
+
+        if (imagenBytes != null && imageBytes != null) {
+        querys.setFoto(imagenBytes);
+        querys.setFoto1(imageBytes);
+             } else {
+             JOptionPane.showMessageDialog(null, "No se pudieron cargar ambas imágenes", "Error de validación", JOptionPane.WARNING_MESSAGE);
+             return; // Salir del método si una o ambas imágenes no se pudieron cargar
+        }
+        
+        querys.setEsmaltado(esmalte);
+        querys.setDescripcion(direccion);
+        
+        if (Manicura.Guardar(querys)) {
+            JOptionPane.showMessageDialog(null, "Nueva manicura o pedicura ingresada exitosamente");
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(null, "Algo falló, consulte con el administrador del sistema", "Error al guardar", JOptionPane.OK_OPTION);
+        }
+    
+      
     }//GEN-LAST:event_btnGuardarActionPerformed
   
  
     private byte[] obtenerBytesDeImagen(String rutaImagen) {
-   
-    File archivoImagen = new File(rutaImagen);
-    
+   File archivoImagen = new File(rutaImagen);
+
     // Verificar si el archivo de imagen existe
-   if (!archivoImagen.exists()) {
-        JOptionPane.showMessageDialog(null, "Debe selecionar una imágen de perfil izquierdo", "Error de validación", JOptionPane.WARNING_MESSAGE);
+    if (!archivoImagen.exists()) {
+       // JOptionPane.showMessageDialog(null, "Debe seleccionar una imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return null; // Retorna null si el archivo no existe
     }
 
@@ -353,7 +343,7 @@ public class IngresarCorte extends javax.swing.JFrame {
     
     // Verificar si el archivo de imagen existe
    if (!archivoImagen.exists()) {
-        JOptionPane.showMessageDialog(null, "Debe selecionar la imágen de frente", "Error de validación", JOptionPane.WARNING_MESSAGE);
+       // JOptionPane.showMessageDialog(null, "Debe selecionar la imágen", "Error de validación", JOptionPane.WARNING_MESSAGE);
         return null; // Retorna null si el archivo no existe
     }
 
@@ -372,31 +362,8 @@ public class IngresarCorte extends javax.swing.JFrame {
         return null; // Retorna null si hay un error al cargar la imagen
     }
 }
-     private byte[] obtenerByteDeImagen (String rutaImagen) {
-   
-    File archivoImagen = new File(rutaImagen);
     
-    // Verificar si el archivo de imagen existe
-   if (!archivoImagen.exists()) {
-        JOptionPane.showMessageDialog(null, "Debe selecionar las imágen de perfil derecho", "Error de validación", JOptionPane.WARNING_MESSAGE);
-        return null; // Retorna null si el archivo no existe
-    }
 
-    // Continuar con la carga de la imagen
-    try {
-        FileInputStream fis = new FileInputStream(archivoImagen);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = fis.read(buffer)) != -1) {
-            bos.write(buffer, 0, bytesRead);
-        }
-        return bos.toByteArray();
-    } catch (IOException e) {
-        e.printStackTrace();
-        return null; // Retorna null si hay un error al cargar la imagen
-    }
-}
 
     private void txtNombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyTyped
     txtNombre.setText(txtNombre.getText().replaceAll("( )+", " "));
@@ -464,76 +431,27 @@ public class IngresarCorte extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPrecioKeyTyped
 
     private void txtDireccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDireccionKeyTyped
-        
         txtDireccion.setText(txtDireccion.getText().replaceAll("( )+", " "));
-        if (txtDireccion.getText().length() == 0 && evt.getKeyChar() == ' ') {
-                    evt.consume();
-                }      
-        
-        
-         char c = evt.getKeyChar();
-         if(Character.isDigit(c)){
+    if (txtDireccion.getText().length() == 0 && evt.getKeyChar() == ' ') {
+        evt.consume();
+    }
+
+    char c = evt.getKeyChar();
+    if (!Character.isDigit(c)) {
+        // Si el carácter no es un dígito, verifica otras condiciones
+        int tam = txtDireccion.getText().length();
+        if (tam >= 180) {
+            evt.consume();
+        } else if ((int) evt.getKeyChar() > 32 && (int) evt.getKeyChar() <= 47
+                || (int) evt.getKeyChar() >= 58 && (int) evt.getKeyChar() <= 64
+                || (int) evt.getKeyChar() >= 91 && (int) evt.getKeyChar() <= 96
+                || (int) evt.getKeyChar() >= 123 && (int) evt.getKeyChar() <= 159
+                || (int) evt.getKeyChar() >= 166 && (int) evt.getKeyChar() <= 255) {
             getToolkit().beep();
             evt.consume();
-         }
-            int tam = txtDireccion.getText().length();
-        if(tam>=180){
-            evt.consume();
-        }  else if((int)evt.getKeyChar()>32 && (int)evt.getKeyChar()<=47
-                ||(int)evt.getKeyChar()>=58 && (int)evt.getKeyChar()<=64
-                ||(int)evt.getKeyChar()>=91 && (int)evt.getKeyChar()<=96
-                ||(int)evt.getKeyChar()>=123 && (int)evt.getKeyChar()<=159
-                ||(int)evt.getKeyChar()>=166 && (int)evt.getKeyChar()<=255){
-             getToolkit().beep();
-            evt.consume();
-        }
-           
-    }//GEN-LAST:event_txtDireccionKeyTyped
-
-    private void Label_Foto3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Label_Foto3MouseClicked
-      
-    JFileChooser se = new JFileChooser();
-    
-    // Agregar un filtro para seleccionar solo archivos PNG
-    FileNameExtensionFilter filter = new FileNameExtensionFilter("Imágenes PNG", "jpg");
-    se.setFileFilter(filter);
-    
-    se.setFileSelectionMode(JFileChooser.FILES_ONLY);
-    int estado = se.showOpenDialog(null);
-
-    if (estado == JFileChooser.APPROVE_OPTION) {
-        try {
-            File archivoSeleccionado = se.getSelectedFile();
-
-            if (archivoSeleccionado != null) {
-                String rutaImagen = archivoSeleccionado.getAbsolutePath();
-                byte[] imageByte = obtenerBytesDeImage(rutaImagen);
-
-                if (imageByte != null) {
-                    ImageIcon icono = new ImageIcon(imageByte);
-                    Image imagen = icono.getImage();
-
-                    // Redimensionar la imagen para ajustar al tamaño del Label_Foto
-                    int ancho = Label_Foto3.getWidth();
-                    int alto = Label_Foto3.getHeight();
-                    Image imagenRedimensionada = imagen.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
-
-                    // Crear un nuevo ImageIcon con la imagen redimensionada
-                    ImageIcon iconoRedimensionado = new ImageIcon(imagenRedimensionada);
-
-                    // Mostrar la imagen en el componente Label_Foto
-                    Label_Foto3.setIcon(iconoRedimensionado);
-                    Label_Foto3.setText(rutaImagen); // Actualiza el texto del Label con la ruta
-                } else {
-                    JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error de validación", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
-    
-    }//GEN-LAST:event_Label_Foto3MouseClicked
+    }//GEN-LAST:event_txtDireccionKeyTyped
 
     private void Label_Foto2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_Label_Foto2MouseClicked
           
@@ -640,21 +558,23 @@ public class IngresarCorte extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(IngresarCorte.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(IngresarManicura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(IngresarCorte.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(IngresarManicura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(IngresarCorte.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(IngresarManicura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(IngresarCorte.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(IngresarManicura.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new IngresarCorte().setVisible(true);
+                new IngresarManicura().setVisible(true);
             }
         });
     }
@@ -662,26 +582,30 @@ public class IngresarCorte extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Label_Foto1;
     private javax.swing.JLabel Label_Foto2;
-    private javax.swing.JLabel Label_Foto3;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnGuardar;
     public static javax.swing.JComboBox<String> cbxCategoria;
+    public static javax.swing.JComboBox<String> cbxEsmalte;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea txtDireccion;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPrecio;
     // End of variables declaration//GEN-END:variables
+
+    private static class SQLException {
+
+        public SQLException() {
+        }
+    }
 
     
 }
